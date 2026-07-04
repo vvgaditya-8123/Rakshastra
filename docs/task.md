@@ -1,0 +1,25 @@
+- [x] Transition WhatsApp to Bot Mode & Fix Windows taskkill timeouts
+  - [x] Terminate any running/stale WhatsApp gateway & bridge processes
+  - [x] Edit `C:\Users\intel\AppData\Local\rakshastra\.env` to set `WHATSAPP_MODE=bot`
+  - [x] Edit `c:\PROJECT\plugins\platforms\whatsapp\adapter.py` to always pass `/F` to `taskkill` on Windows
+  - [x] Verify that the gateway starts successfully without timing out
+  - [x] Confirm friend number can interact with the WhatsApp bot JID
+- [x] Verify dependencies and remove `apps/desktop` and `apps/bootstrap-installer`
+- [x] Verify dependencies and remove `datagen-config-examples/`
+- [x] Replace `assets/banner.png` with Rakshastra placeholder
+- [x] Verify CLI startup and run smoke tests / validation checks
+- [x] Implement Layered Memory (Conversation state, Security memory, Incident memory, and Asset Graph)
+- [x] Implement Phase 3G.1: Ingestion Connectors (Telegram, Instagram, WhatsApp, website, and paste site collectors)
+- [x] Implement Phase 3G.2: Drug Intelligence Slang & Content Classifier Engines
+- [x] Implement Phase 3G.3: Bot & Automation Detector Engine
+- [x] Implement Phase 3G.4: Cross-Platform Entity Resolution Engine
+- [x] Implement Phase 3G.5: Mapped Criminal Intelligence Graph
+- [x] Implement Phase 3G.6: Threat Prioritization Engine & Watchlist Prioritizer
+- [x] Implement Phase 3G.8: Logging & Explanatory Audit Compliance Engine
+- [x] Connect Phase 3G Engines to the CLI & Agent Tools (`tools/cyber_intelligence_tools.py`)
+- [x] Completely scrub all "Nous Research" branding and references from CLI, parser, setup, plugins, docs, and tests
+- [ ] Implement Classified Skills (network-scan, docker-audit, etc.)
+- [ ] Implement Tool Permissions (Capability & Permission layers)
+- [ ] Expose Security Tools (`tools/security_tools.py`)
+- [ ] Build Evidence Capturing & Reporting Pipelines
+- [ ] Build Threat Engine, Asset Graph integration, and dashboard
