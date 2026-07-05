@@ -246,31 +246,89 @@ code { font-size: 0.875rem; }
 }
 
 /* ------------------------------------------------------------------ */
-/* Ambient background depth — soft radial glows behind the dashboard  */
+/* Ambient background depth & animations — matching landing page       */
 /* ------------------------------------------------------------------ */
-#root::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(255, 125, 54, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 50% 90%, rgba(255, 75, 75, 0.03) 0%, transparent 50%);
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.8; transform: scale(1) translate(0, 0); }
+  50%      { opacity: 1; transform: scale(1.05) translate(1%, -1%); }
 }
 
-/* Noise texture overlay */
-#root::after {
+body {
+  background: #050505 !important;
+  position: relative;
+}
+
+/* Deep ambient glow layer — breathing radial gradients */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -10%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(255, 125, 54, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 90%, rgba(255, 75, 75, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 80% 60%, rgba(0, 255, 170, 0.04) 0%, transparent 40%);
+  animation: pulseGlow 12s ease-in-out infinite alternate;
+}
+
+/* Premium noise/grain texture overlay */
+body::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.018;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 200px 200px;
+}
+
+/* Make layout containers transparent so body background is visible */
+#root,
+#root > div,
+.bg-background-base {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Slightly darken panel wrappers for readability with glass blur */
+.border-border, 
+.border-current\/20 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Translucent glassmorphism for cards, logs, code, and secondary panels */
+.bg-card,
+.bg-secondary\/30,
+pre {
+  background-color: rgba(255, 255, 255, 0.015) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* High contrast text overrides */
+.text-text-primary, 
+.text-foreground, 
+h1, h2, h3, h4, h5, h6 {
+  color: #f6f4f2 !important;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+}
+
+.text-text-secondary {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Make orange links, icons, and status indicators pop */
+.text-primary, 
+.text-midground, 
+.text-warning {
+  color: #ff7d36 !important;
+  filter: drop-shadow(0 0 6px rgba(255, 125, 54, 0.12));
 }
 
 /* ------------------------------------------------------------------ */
@@ -319,3 +377,4 @@ code { font-size: 0.875rem; }
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
+
