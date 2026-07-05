@@ -49,16 +49,16 @@
 
 :root {
   /* LENS_0 — from design-language/src/ui/components/overlays/index.tsx.
-     These are the defaults for the `default` (Rakshastra Teal) dashboard theme;
+     These are the defaults for the `default` (Rakshastra Dark) dashboard theme;
      ThemeProvider rewrites them as inline styles when a user switches themes. */
   --foreground: color-mix(in srgb, #ffffff 0%, transparent);
   --foreground-base: #ffffff;
   --foreground-alpha: 0;
-  --midground: color-mix(in srgb, #ffe6cb 100%, transparent);
-  --midground-base: #ffe6cb;
+  --midground: color-mix(in srgb, #ff7d36 100%, transparent);
+  --midground-base: #ff7d36;
   --midground-alpha: 1;
-  --background: color-mix(in srgb, #041c1c 100%, transparent);
-  --background-base: #041c1c;
+  --background: color-mix(in srgb, #0a0908 100%, transparent);
+  --background-base: #0a0908;
   --background-alpha: 1;
 
   /* Typography tokens — rewritten by ThemeProvider. Defaults match the
@@ -80,11 +80,11 @@
 
   /* Data-series accents — consumed by Analytics + Models pages for the
      input-vs-output token visualisations (chart bars, table values,
-     legend swatches). Defaults are tuned for the Rakshastra-teal LENS_0
-     look: cream input + emerald-400 output read as warm/cool against
+     legend swatches). Defaults are tuned for the Rakshastra-dark LENS_0
+     look: orange input + emerald-400 output read as warm/cool against
      the dark canvas. Themes override via ThemeProvider, which emits
      these as `--series-input-token` / `--series-output-token`. */
-  --series-input-token: #ffe6cb;
+  --series-input-token: #ff7d36;
   --series-output-token: #34d399;
 }
 
@@ -245,3 +245,77 @@ code { font-size: 0.875rem; }
     2px 2px;
 }
 
+/* ------------------------------------------------------------------ */
+/* Ambient background depth — soft radial glows behind the dashboard  */
+/* ------------------------------------------------------------------ */
+#root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(255, 125, 54, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 90%, rgba(255, 75, 75, 0.03) 0%, transparent 50%);
+}
+
+/* Noise texture overlay */
+#root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Page-level animation utilities                                      */
+/* ------------------------------------------------------------------ */
+
+@keyframes fade-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Utility class for staggered entrance animations */
+.animate-fade-in {
+  animation: fade-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-fade-in-d1 { animation-delay: 0.05s; }
+.animate-fade-in-d2 { animation-delay: 0.1s; }
+.animate-fade-in-d3 { animation-delay: 0.15s; }
+.animate-fade-in-d4 { animation-delay: 0.2s; }
+.animate-fade-in-d5 { animation-delay: 0.25s; }
+.animate-fade-in-d6 { animation-delay: 0.3s; }
+
+/* Glow pulse for status indicators */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Shimmer loading skeleton */
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 30%, rgba(255,125,54,0.08) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}

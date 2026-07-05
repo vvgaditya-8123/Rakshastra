@@ -40,13 +40,13 @@ const DEFAULT_LAYOUT: ThemeLayout = {
 
 export const defaultTheme: DashboardTheme = {
   name: "default",
-  label: "Rakshastra Teal",
-  description: "Classic dark teal — the canonical Rakshastra look",
+  label: "Rakshastra Dark",
+  description: "Canonical warm charcoal and orange — the official Rakshastra look",
   palette: {
-    background: { hex: "#041c1c", alpha: 1 },
-    midground: { hex: "#ffe6cb", alpha: 1 },
+    background: { hex: "#0a0908", alpha: 1 },
+    midground: { hex: "#ff7d36", alpha: 1 },
     foreground: { hex: "#ffffff", alpha: 0 },
-    warmGlow: "rgba(255, 189, 56, 0.35)",
+    warmGlow: "rgba(255, 125, 54, 0.35)",
     noiseOpacity: 1,
   },
   typography: DEFAULT_TYPOGRAPHY,
@@ -214,8 +214,8 @@ export const nousBlueTheme: DashboardTheme = {
  */
 export const defaultLargeTheme: DashboardTheme = {
   name: "default-large",
-  label: "Rakshastra Teal (Large)",
-  description: "Rakshastra Teal with bigger fonts and roomier spacing",
+  label: "Rakshastra Dark (Large)",
+  description: "Rakshastra Dark with bigger fonts and roomier spacing",
   palette: defaultTheme.palette,
   typography: {
     ...DEFAULT_TYPOGRAPHY,
