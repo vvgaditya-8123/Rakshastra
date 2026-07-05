@@ -136,8 +136,8 @@ foreach ($tmpVar in @('TEMP', 'TMP')) {
 # Configuration
 # ============================================================================
 
-$RepoUrlSsh = "git@github.com:NousResearch/rakshastra-agent.git"
-$RepoUrlHttps = "https://github.com/NousResearch/rakshastra-agent.git"
+$RepoUrlSsh = "git@github.com:SKYGOD07/Rakshastra.git"
+$RepoUrlHttps = "https://github.com/SKYGOD07/Rakshastra.git"
 $PythonVersion = "3.11"
 # Minor versions the installer accepts when the requested $PythonVersion isn't
 # available, in preference order.  uv discovers both uv-managed and system
@@ -245,7 +245,7 @@ function Invoke-NativeWithRelaxedErrorAction {
         $ErrorActionPreference = $prevEAP
     }
 }
-function Discard-LockfileChurn {
+function Clear-LockfileChurn {
     param([string]$Repo = $InstallDir)
 
     if (-not $Repo -or -not (Test-Path (Join-Path $Repo ".git"))) { return }
@@ -735,15 +735,12 @@ function Install-Git {
     try {
         $arch = Get-WindowsArch
         if ($arch -eq 'arm64') {
-            $assetTag = 'arm64'
             $downloadIsZip = $false
         } elseif ($arch -eq 'x64') {
-            $assetTag = '64-bit'
             $downloadIsZip = $false
         } else {
             # PortableGit does not ship 32-bit / arm builds -- fall back to MinGit
             # 32-bit with a warning that bash-based features will be unavailable.
-            $assetTag = '32-bit-mingit'
             $downloadIsZip = $true
         }
 
@@ -758,7 +755,7 @@ function Install-Git {
         $gitVer    = "2.54.0"
         $gitVerTag = "$gitVer.windows.1"
 
-        if ($arch -eq "32-bit-mingit") {
+        if ($downloadIsZip) {
             Write-Warn "32-bit Windows detected -- PortableGit is 64-bit only.  Installing MinGit 32-bit as a last resort; bash-dependent Rakshastra features (terminal tool, agent-browser) will not work on this machine."
             $assetName    = "MinGit-$gitVer-32-bit.zip"
             $downloadIsZip = $true
@@ -771,7 +768,6 @@ function Install-Git {
         }
 
         $downloadUrl = "https://github.com/git-for-windows/git/releases/download/$gitTag/$assetName"
-        $downloadExt = if ($downloadIsZip) { "zip" } else { "7z.exe" }
         $tmpFile = "$env:TEMP\$assetName"
         $gitDir = "$RakshastraHome\git"
 
@@ -1315,7 +1311,7 @@ function Install-Repository {
                 # users hit on update. Pin autocrlf=false so the dirt is never
                 # created in the first place.
                 git -c windows.appendAtomically=false config core.autocrlf false 2>$null
-                Discard-LockfileChurn $InstallDir
+                Clear-LockfileChurn $InstallDir
                 # Preserve any real local changes before the checkout instead of
                 # discarding them with `reset --hard HEAD`. The old hard reset
                 # silently destroyed agent-edited source on managed clones (the
@@ -2193,7 +2189,7 @@ function Install-NodeDeps {
     # PE file.  The invocation-operator ``& $npmExe`` routes through the
     # PowerShell command pipeline which DOES honour .cmd batch shims, so
     # it works uniformly for npm.cmd, npx.cmd, and bare .exe files.
-    function _Run-NpmInstall([string]$label, [string]$installDir, [string]$logPath, [string]$npmPath) {
+    function Invoke-RunNpmInstall([string]$label, [string]$installDir, [string]$logPath, [string]$npmPath) {
         Push-Location $installDir
         # Capture EAP outside the try block so the catch's restore call always
         # has a meaningful value (see Install-Uv for the full rationale).
@@ -2259,7 +2255,7 @@ function Install-NodeDeps {
     if (Test-Path "$InstallDir\package.json") {
         Write-Info "Installing Node.js dependencies (browser tools)..."
         $browserLog = "$env:TEMP\rakshastra-npm-browser-$(Get-Random).log"
-        $browserNpmOk = _Run-NpmInstall "Browser tools" $InstallDir $browserLog $npmExe
+        $browserNpmOk = Invoke-RunNpmInstall "Browser tools" $InstallDir $browserLog $npmExe
 
         # Install Playwright Chromium (mirrors scripts/install.sh behaviour for
         # Linux).  Without this, tools/browser_tool.py::check_browser_requirements
@@ -2363,7 +2359,7 @@ function Install-NodeDeps {
     if (Test-Path "$tuiDir\package.json") {
         Write-Info "Installing TUI dependencies..."
         $tuiLog = "$env:TEMP\rakshastra-npm-tui-$(Get-Random).log"
-        [void](_Run-NpmInstall "TUI" $tuiDir $tuiLog $npmExe)
+        [void](Invoke-RunNpmInstall "TUI" $tuiDir $tuiLog $npmExe)
     }
 }
 
@@ -2478,7 +2474,7 @@ function Test-ElectronPkgStagedMissingDist {
     )
 }
 
-function Try-RestoreElectronDist {
+function Invoke-TryRestoreElectronDist {
     param([string]$InstallDir)
     if (Restore-ElectronDist -InstallDir $InstallDir) { return $true }
     if ($env:ELECTRON_MIRROR) { return $false }
@@ -2582,7 +2578,7 @@ function Install-Desktop {
         if ($code -ne 0) {
             if (Test-ElectronPkgStagedMissingDist -InstallDir $InstallDir) {
                 Write-Warn "Desktop dependency install failed with a missing Electron dist; attempting self-heal..."
-                Try-RestoreElectronDist -InstallDir $InstallDir | Out-Null
+                Invoke-TryRestoreElectronDist -InstallDir $InstallDir | Out-Null
             } else {
                 Show-NpmCertHint ($npmOut -join "`n") | Out-Null
                 throw "desktop workspace npm install failed (exit $code) -- see lines above for cause"
@@ -3135,31 +3131,31 @@ function Write-Completion {
 # stages; ``NeedsUserInput`` tells UIs "this stage prompts -- either skip it
 # or arrange to provide answers another way."
 $InstallStages = @(
-    @{ Name = "uv";               Title = "Installing uv package manager";        Category = "prereqs";      NeedsUserInput = $false; Worker = "Stage-Uv" }
-    @{ Name = "python";           Title = "Verifying Python $PythonVersion";      Category = "prereqs";      NeedsUserInput = $false; Worker = "Stage-Python" }
-    @{ Name = "git";              Title = "Installing Git";                       Category = "prereqs";      NeedsUserInput = $false; Worker = "Stage-Git" }
-    @{ Name = "node";             Title = "Detecting Node.js";                    Category = "prereqs";      NeedsUserInput = $false; Worker = "Stage-Node" }
-    @{ Name = "system-packages";  Title = "Installing ripgrep and ffmpeg";        Category = "prereqs";      NeedsUserInput = $false; Worker = "Stage-SystemPackages" }
-    @{ Name = "repository";       Title = "Cloning Rakshastra repository";            Category = "install";      NeedsUserInput = $false; Worker = "Stage-Repository" }
-    @{ Name = "venv";             Title = "Creating Python virtual environment";  Category = "install";      NeedsUserInput = $false; Worker = "Stage-Venv" }
-    @{ Name = "dependencies";     Title = "Installing Python dependencies";       Category = "install";      NeedsUserInput = $false; Worker = "Stage-Dependencies" }
-    @{ Name = "node-deps";        Title = "Installing Node.js dependencies";      Category = "install";      NeedsUserInput = $false; Worker = "Stage-NodeDeps" }
+    @{ Name = "uv";               Title = "Installing uv package manager";        Category = "prereqs";      NeedsUserInput = $false; Worker = "Invoke-StageUv" }
+    @{ Name = "python";           Title = "Verifying Python $PythonVersion";      Category = "prereqs";      NeedsUserInput = $false; Worker = "Invoke-StagePython" }
+    @{ Name = "git";              Title = "Installing Git";                       Category = "prereqs";      NeedsUserInput = $false; Worker = "Invoke-StageGit" }
+    @{ Name = "node";             Title = "Detecting Node.js";                    Category = "prereqs";      NeedsUserInput = $false; Worker = "Invoke-StageNode" }
+    @{ Name = "system-packages";  Title = "Installing ripgrep and ffmpeg";        Category = "prereqs";      NeedsUserInput = $false; Worker = "Invoke-StageSystemPackages" }
+    @{ Name = "repository";       Title = "Cloning Rakshastra repository";            Category = "install";      NeedsUserInput = $false; Worker = "Invoke-StageRepository" }
+    @{ Name = "venv";             Title = "Creating Python virtual environment";  Category = "install";      NeedsUserInput = $false; Worker = "Invoke-StageVenv" }
+    @{ Name = "dependencies";     Title = "Installing Python dependencies";       Category = "install";      NeedsUserInput = $false; Worker = "Invoke-StageDependencies" }
+    @{ Name = "node-deps";        Title = "Installing Node.js dependencies";      Category = "install";      NeedsUserInput = $false; Worker = "Invoke-StageNodeDeps" }
 )
 if ($IncludeDesktop) {
     # Insert AFTER node-deps so workspace npm is already installed when
     # the desktop build runs. Inserted only when explicitly requested
     # (Rakshastra-Setup.exe), never via the irm|iex CLI one-liner.
-    $InstallStages += @{ Name = "desktop"; Title = "Building desktop app"; Category = "install"; NeedsUserInput = $false; Worker = "Stage-Desktop" }
+    $InstallStages += @{ Name = "desktop"; Title = "Building desktop app"; Category = "install"; NeedsUserInput = $false; Worker = "Invoke-StageDesktop" }
 }
 $InstallStages += @(
-    @{ Name = "path";             Title = "Adding Rakshastra to PATH";                Category = "finalize";     NeedsUserInput = $false; Worker = "Stage-Path" }
-    @{ Name = "config-templates"; Title = "Writing configuration templates";      Category = "finalize";     NeedsUserInput = $false; Worker = "Stage-ConfigTemplates" }
-    @{ Name = "platform-sdks";    Title = "Installing messaging platform SDKs";   Category = "finalize";     NeedsUserInput = $false; Worker = "Stage-PlatformSdks" }
-    @{ Name = "bootstrap-marker"; Title = "Marking install complete";              Category = "finalize";     NeedsUserInput = $false; Worker = "Stage-BootstrapMarker" }
+    @{ Name = "path";             Title = "Adding Rakshastra to PATH";                Category = "finalize";     NeedsUserInput = $false; Worker = "Invoke-StagePath" }
+    @{ Name = "config-templates"; Title = "Writing configuration templates";      Category = "finalize";     NeedsUserInput = $false; Worker = "Invoke-StageConfigTemplates" }
+    @{ Name = "platform-sdks";    Title = "Installing messaging platform SDKs";   Category = "finalize";     NeedsUserInput = $false; Worker = "Invoke-StagePlatformSdks" }
+    @{ Name = "bootstrap-marker"; Title = "Marking install complete";              Category = "finalize";     NeedsUserInput = $false; Worker = "Invoke-StageBootstrapMarker" }
     # Interactive stages.  In non-interactive mode these become no-ops; the
     # caller (GUI / CI) handles the equivalent UX themselves.
-    @{ Name = "configure";        Title = "Configuring API keys and models";      Category = "post-install"; NeedsUserInput = $true;  Worker = "Stage-Configure" }
-    @{ Name = "gateway";          Title = "Starting messaging gateway";           Category = "post-install"; NeedsUserInput = $true;  Worker = "Stage-Gateway" }
+    @{ Name = "configure";        Title = "Configuring API keys and models";      Category = "post-install"; NeedsUserInput = $true;  Worker = "Invoke-StageConfigure" }
+    @{ Name = "gateway";          Title = "Starting messaging gateway";           Category = "post-install"; NeedsUserInput = $true;  Worker = "Invoke-StageGateway" }
 )
 
 # Stage workers -- thin wrappers that delegate to the existing Install-* /
@@ -3167,38 +3163,38 @@ $InstallStages += @(
 # as a separate layer so the existing functions remain callable directly
 # (helpful for one-off recovery: ``. install.ps1; Install-Venv``).
 #
-# Stages that depend on uv (anything after Stage-Uv) call Resolve-UvCmd
+# Stages that depend on uv (anything after Invoke-StageUv) call Resolve-UvCmd
 # first so they work in cross-process driver mode where $script:UvCmd
-# set by Stage-Uv in a sibling powershell process is not visible here.
+# set by Invoke-StageUv in a sibling powershell process is not visible here.
 # Resolve-UvCmd is a fast no-op when $script:UvCmd is already populated
 # (the default-invocation case where Main runs everything in one
 # process), and throws cleanly if uv truly isn't installed yet.
-function Stage-Uv               { if (-not (Install-Uv))     { throw "uv installation failed" } }
-function Stage-Python           { Resolve-UvCmd; if (-not (Test-Python))    { throw "Python $PythonVersion not available" } }
-function Stage-Git              { if (-not (Install-Git))    { throw "Git not available and auto-install failed -- install from https://git-scm.com/download/win then re-run" } }
+function Invoke-StageUv               { if (-not (Install-Uv))     { throw "uv installation failed" } }
+function Invoke-StagePython           { Resolve-UvCmd; if (-not (Test-Python))    { throw "Python $PythonVersion not available" } }
+function Invoke-StageGit              { if (-not (Install-Git))    { throw "Git not available and auto-install failed -- install from https://git-scm.com/download/win then re-run" } }
 # Node is optional (browser tools degrade gracefully without it).  Surface
 # failure to the JSON contract as skipped=true / reason rather than ok=true,
 # so a GUI driver consuming the manifest can distinguish "node ready" from
 # "node missing".  Install flow continues either way -- matches the
 # existing Write-Completion behavior that prints a "Note: Node.js could
 # not be installed" hint instead of aborting.
-function Stage-Node             {
+function Invoke-StageNode             {
     if (-not (Test-Node)) {
         $script:_StageSkippedReason = "Node.js not available; browser tools will be unavailable until node is installed manually from https://nodejs.org/en/download/"
     }
 }
-function Stage-SystemPackages   { Install-SystemPackages }
-function Stage-Repository       { Install-Repository }
-function Stage-Venv             { Resolve-UvCmd; Install-Venv }
-function Stage-Dependencies     { Resolve-UvCmd; Install-Dependencies }
-function Stage-NodeDeps         { Install-NodeDeps }
-function Stage-Desktop          { Install-Desktop }
-function Stage-Path             { Set-PathVariable }
-function Stage-ConfigTemplates  { Copy-ConfigTemplates }
-function Stage-PlatformSdks     { Resolve-UvCmd; Install-PlatformSdks }
-function Stage-BootstrapMarker  { Write-BootstrapMarker }
-function Stage-Configure        { Invoke-SetupWizard }
-function Stage-Gateway          { Start-GatewayIfConfigured }
+function Invoke-StageSystemPackages   { Install-SystemPackages }
+function Invoke-StageRepository       { Install-Repository }
+function Invoke-StageVenv             { Resolve-UvCmd; Install-Venv }
+function Invoke-StageDependencies     { Resolve-UvCmd; Install-Dependencies }
+function Invoke-StageNodeDeps         { Install-NodeDeps }
+function Invoke-StageDesktop          { Install-Desktop }
+function Invoke-StagePath             { Set-PathVariable }
+function Invoke-StageConfigTemplates  { Copy-ConfigTemplates }
+function Invoke-StagePlatformSdks     { Resolve-UvCmd; Install-PlatformSdks }
+function Invoke-StageBootstrapMarker  { Write-BootstrapMarker }
+function Invoke-StageConfigure        { Invoke-SetupWizard }
+function Invoke-StageGateway          { Start-GatewayIfConfigured }
 
 function Get-InstallStage {
     param([string]$Name)
