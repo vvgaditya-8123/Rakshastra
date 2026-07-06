@@ -186,3 +186,23 @@ apps/desktop/demo/
 # PR body is the archive. See the rakshastra-agent-dev skill's
 # pr-infographic-workflow reference (storage rule + lapse #8 / #COMMIT-1).
 infographic/
+
+# Landing Page duplicate codebase / release / test assets
+/Landing Page/agent/
+/Landing Page/skills/
+/Landing Page/ui-tui/
+/Landing Page/web/
+/Landing Page/tools/
+/Landing Page/tests/
+/Landing Page/rakshastra_cli/
+/Landing Page/rakshastra_core/
+/Landing Page/Landing Page/
+/Landing Page/rakshastra_agent_win_x64.zip
+/Landing Page/ChatGPT Image*
+/Landing Page/Rakshastra cyber defense logo.png
+/Landing Page/pyproject.toml
+/Landing Page/toolsets.py
+/Landing Page/AGENTS.md
+/Landing Page/CLAUDE.md
+/Landing Page/src/app/docs/
+
