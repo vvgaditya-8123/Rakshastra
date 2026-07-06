@@ -852,6 +852,43 @@ export const api = {
       `/api/messaging/telegram/onboarding/${encodeURIComponent(pairingId)}`,
       { method: "DELETE" },
     ),
+  startWhatsAppOnboarding: () =>
+    fetchJSON<{ status: string }>("/api/messaging/whatsapp/onboarding/start", {
+      method: "POST",
+    }),
+  getWhatsAppOnboardingStatus: () =>
+    fetchJSON<{ status: string; qr_payload: string | null; error?: string }>(
+      "/api/messaging/whatsapp/onboarding/status",
+    ),
+  applyWhatsAppOnboarding: (profile?: string) =>
+    fetchJSON<TelegramOnboardingApplyResponse>(
+      `/api/messaging/whatsapp/onboarding/apply${profile ? `?profile=${encodeURIComponent(profile)}` : ""}`,
+      { method: "POST" },
+    ),
+  cancelWhatsAppOnboarding: () =>
+    fetchJSON<{ ok: boolean }>("/api/messaging/whatsapp/onboarding", {
+      method: "DELETE",
+    }),
+  getNarcoticsDictionary: () =>
+    fetchJSON<any[]>("/api/narcotics/dictionary"),
+  searchNarcotics: (q: string) =>
+    fetchJSON<any>(`/api/narcotics/search?q=${encodeURIComponent(q)}`),
+  getNarcoticsAnalytics: () =>
+    fetchJSON<any>("/api/narcotics/analytics"),
+  getNarcoticsIdentities: () =>
+    fetchJSON<any[]>("/api/narcotics/identities"),
+  getNarcoticsEvidence: () =>
+    fetchJSON<any[]>("/api/narcotics/evidence"),
+  scanNarcoticsTarget: (target: string, sourceType: string) =>
+    fetchJSON<any>("/api/narcotics/scan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target, source_type: sourceType })
+    }),
+  getDrugDictionary: () =>
+    fetchJSON<any>("/api/narcotics/drug-dictionary"),
+  getScanHistory: () =>
+    fetchJSON<any>("/api/narcotics/scan-history"),
 
   // Gateway / update actions
   restartGateway: () =>
