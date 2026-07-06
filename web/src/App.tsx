@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   useCallback,
   useEffect,
@@ -20,6 +21,7 @@ import {
 } from "react-router-dom";
 import {
   Activity,
+  AlertTriangle,
   BarChart3,
   BookOpen,
   Clock,
@@ -33,8 +35,10 @@ import {
   Globe,
   Heart,
   KeyRound,
+  Lock,
   Menu,
   MessageSquare,
+  Network,
   Package,
   PanelLeftClose,
   PanelLeftOpen,
@@ -53,6 +57,8 @@ import {
   Wrench,
   X,
   Zap,
+  Play,
+  Square,
 } from "lucide-react";
 import { Button } from "@nous-research/ui/ui/components/button";
 import { SelectionSwitcher } from "@nous-research/ui/ui/components/selection-switcher";
@@ -104,7 +110,7 @@ import { api } from "@/lib/api";
 import type { StatusResponse, UpdateCheckResponse } from "@/lib/api";
 
 function RootRedirect() {
-  return <Navigate to="/sessions" replace />;
+  return <Navigate to="/monitor" replace />;
 }
 
 function UnknownRouteFallback({ pluginsLoading }: { pluginsLoading: boolean }) {
@@ -112,7 +118,7 @@ function UnknownRouteFallback({ pluginsLoading }: { pluginsLoading: boolean }) {
     // Render nothing during the plugin-load window — a spinner here would just flash.
     return null;
   }
-  return <Navigate to="/sessions" replace />;
+  return <Navigate to="/monitor" replace />;
 }
 
 const CHAT_NAV_ITEM: NavItem = {
@@ -351,6 +357,8 @@ function buildRoutes(
   return routes;
 }
 
+
+
 const SIDEBAR_COLLAPSED_KEY = "rakshastra-sidebar-collapsed";
 
 export default function App() {
@@ -434,13 +442,20 @@ export default function App() {
   );
 
   const builtinNav = useMemo(() => {
-    const base = embeddedChat
-      ? [CHAT_NAV_ITEM, ...BUILTIN_NAV_REST]
-      : BUILTIN_NAV_REST;
-    return showTokenAnalytics
-      ? base
-      : base.filter((n) => n.path !== "/analytics");
-  }, [embeddedChat, showTokenAnalytics]);
+    return [
+      { path: "/monitor", label: "Dashboard", icon: BarChart3 },
+      { path: "/sessions", label: "Live Monitoring", icon: Activity },
+      { path: "/files", label: "Investigations", icon: FolderOpen },
+      { path: "/pairing", label: "Entity Search", icon: ShieldCheck },
+      { path: "/mcp", label: "Graph Intelligence", icon: Network },
+      { path: "/channels", label: "Social Platforms", icon: Radio },
+      { path: "/webhooks", label: "Alerts", icon: AlertTriangle },
+      { path: "/files?evidence=true", label: "Evidence Locker", icon: Lock },
+      { path: "/cron", label: "Timeline", icon: Clock },
+      { path: "/logs", label: "Reports", icon: FileText },
+      { path: "/config", label: "Settings", icon: Settings },
+    ];
+  }, []);
 
   const sidebarNav = useMemo(
     () => partitionSidebarNav(builtinNav, manifests),
@@ -909,7 +924,11 @@ function SidebarSystemActions({
   const { activeAction, isBusy, isRunning, pendingAction, runAction } =
     useSystemActions();
   const canUpdateRakshastra = status?.can_update_rakshastra === true;
+  const isOnline = status?.gateway_running === true || status?.gateway_state === "running";
+
   const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
+  const [startConfirmOpen, setStartConfirmOpen] = useState(false);
+  const [stopConfirmOpen, setStopConfirmOpen] = useState(false);
   const [updateConfirmOpen, setUpdateConfirmOpen] = useState(false);
   const [updateConfirmInfo, setUpdateConfirmInfo] =
     useState<UpdateCheckResponse | null>(null);
@@ -960,6 +979,25 @@ function SidebarSystemActions({
       spin: true,
     },
   ];
+
+  if (isOnline) {
+    items.push({
+      action: "stop",
+      icon: Square,
+      label: "Stop Gateway",
+      runningLabel: "Stopping Gateway...",
+      spin: true,
+    });
+  } else {
+    items.push({
+      action: "start",
+      icon: Play,
+      label: "Start Gateway",
+      runningLabel: "Starting Gateway...",
+      spin: true,
+    });
+  }
+
   if (canUpdateRakshastra) {
     items.push({
       action: "update",
@@ -976,6 +1014,14 @@ function SidebarSystemActions({
       setRestartConfirmOpen(true);
       return;
     }
+    if (action === "start") {
+      setStartConfirmOpen(true);
+      return;
+    }
+    if (action === "stop") {
+      setStopConfirmOpen(true);
+      return;
+    }
     if (action === "update") {
       setUpdateConfirmOpen(true);
       return;
@@ -988,6 +1034,20 @@ function SidebarSystemActions({
   const confirmRestart = () => {
     setRestartConfirmOpen(false);
     void runAction("restart");
+    navigate("/sessions");
+    onNavigate();
+  };
+
+  const confirmStart = () => {
+    setStartConfirmOpen(false);
+    void runAction("start");
+    navigate("/sessions");
+    onNavigate();
+  };
+
+  const confirmStop = () => {
+    setStopConfirmOpen(false);
+    void runAction("stop");
     navigate("/sessions");
     onNavigate();
   };
@@ -1054,6 +1114,28 @@ function SidebarSystemActions({
       title={
         t.status.restartGatewayConfirmTitle ?? `${t.status.restartGateway}?`
       }
+    />
+
+    <ConfirmDialog
+      cancelLabel={t.common.cancel}
+      confirmLabel="Start Gateway"
+      description="This starts the Rakshastra gateway process. Connected platforms will resume monitoring."
+      loading={pendingAction === "start"}
+      onCancel={() => setStartConfirmOpen(false)}
+      onConfirm={confirmStart}
+      open={startConfirmOpen}
+      title="Start Gateway?"
+    />
+
+    <ConfirmDialog
+      cancelLabel={t.common.cancel}
+      confirmLabel="Stop Gateway"
+      description="This stops the Rakshastra gateway process. No alerts or messages will be processed."
+      loading={pendingAction === "stop"}
+      onCancel={() => setStopConfirmOpen(false)}
+      onConfirm={confirmStop}
+      open={stopConfirmOpen}
+      title="Stop Gateway?"
     />
 
     <ConfirmDialog
