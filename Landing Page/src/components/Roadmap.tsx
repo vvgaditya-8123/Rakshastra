@@ -89,67 +89,32 @@ const phases = [
     phase: "Phase 1",
     cls: "p1",
     title: "Setup & Cloud Infrastructure",
-    tagline: "Laying the secure foundation for the OSINT ecosystem",
-    desc: "Configure security-hardened environments and provision database services with unified identity access management.",
-    bullets: [
-      "Fork the core Hermes codebase and implement continuous deployment via Cloud Build pipelines.",
-      "Provision serverless GCP Cloud Run containers running with isolated IAM profiles.",
-      "Initialize high-performance Neo4j Graph Database and resilient serverless Firestore instances.",
-      "Configure encrypted credential vaults and establish connection tunnels for the Gemini API."
-    ]
+    desc: "Fork Hermes codebase. Configure GCP — Cloud Run, Firestore, Gemini API, and Neo4j Graph DB.",
   },
   {
     phase: "Phase 2",
     cls: "p2",
     title: "Data Ingestion Pipelines",
-    tagline: "Connecting live endpoints to ingest high-fidelity intelligence",
-    desc: "Establish secure data listeners and scrapers to channel OSINT content directly into automated processing systems.",
-    bullets: [
-      "Deploy custom Telegram API listeners subscribing to public and private investigation streams.",
-      "Configure headless Instagram scrapers running through rotating proxy networks to prevent rate limiting.",
-      "Build real-time ETL pipelines utilizing structured regex parsing to sanitize raw text blocks.",
-      "Map cross-platform identities into the Neo4j threat graph, establishing tracking vectors."
-    ]
+    desc: "Connect Telegram channels, Instagram scrapers. Build ETL pipelines into the Neo4j threat graph.",
   },
   {
     phase: "Phase 3",
     cls: "p3",
     title: "Core Agent Security Skills",
-    tagline: "Empowering AI agents with logical reasoning and footprint protection",
-    desc: "Develop advanced LLM chains to analyze threat contexts safely while keeping agent footprints invisible.",
-    bullets: [
-      "Implement IP isolation layers, Tor-routing wrappers, and mock user agents to hide footprints.",
-      "Integrate entity-extraction algorithms targeting phone numbers, crypto wallets, and hidden links.",
-      "Design Gemini 1.5 Pro chain-of-thought routing to deduce coordination patterns.",
-      "Deploy localized auto-summarization templates to produce rapid incident intelligence reports."
-    ]
+    desc: "IP isolation, contact parsing, Gemini Pro reasoning chains for incident summarization.",
   },
   {
     phase: "Phase 4",
     cls: "p4",
     title: "Investigator Dashboard & Alerts",
-    tagline: "Synthesizing graph networks into visual command centers",
-    desc: "Create interactive user interfaces for real-time visualization, query filters, and instant notification systems.",
-    bullets: [
-      "Develop a React-based interactive canvas rendering real-time Neo4j network graphs.",
-      "Build tabular search filters querying actors, timestamps, threat weights, and platforms.",
-      "Integrate Twilio API handlers to format and dispatch immediate threat alerts directly to WhatsApp.",
-      "Configure multi-user access levels ensuring sensitive investigations remain strictly audited."
-    ]
+    desc: "Visual threat command center with Twilio-powered real-time WhatsApp alert digests.",
   },
   {
     phase: "Phase 5",
     cls: "p5",
     title: "Pilot Deployment & Optimization",
-    tagline: "Validating operational stability and scaling output quality",
-    desc: "Perform full-scale threat simulations, refine linguistic evaluation parameters, and deploy live integrations.",
-    bullets: [
-      "Simulate cross-platform threat campaigns to analyze end-to-end system response latency.",
-      "Finetune context prompts to decrease false positives and raise accuracy of entities extracted.",
-      "Secure production endpoints via OAuth2 credentials, strict CSRF mitigation, and session timeouts.",
-      "Establish automated feedback loops with partner agencies to continuously refine threat weight rules."
-    ]
-  }
+    desc: "End-to-end testing, model refinement on real threat data, and field deployment.",
+  },
 ];
 
 export interface TiltCardProps {
@@ -268,15 +233,13 @@ const CharacterV1 = ({
   const x = useTransform(
     scrollYProgress,
     [0.05, 0.38],
-    [`${distanceFromCenter * 2.2}vw`, "0vw"],
-    { clamp: true }
+    [`${distanceFromCenter * 2.2}vw`, "0vw"]
   );
-  const opacity = useTransform(scrollYProgress, [0.05, 0.28], [0, 1], { clamp: true });
+  const opacity = useTransform(scrollYProgress, [0.05, 0.28], [0, 1]);
   const rotateY = useTransform(
     scrollYProgress,
     [0.05, 0.38],
-    [distanceFromCenter * 8, 0],
-    { clamp: true }
+    [distanceFromCenter * 40, 0]
   );
 
   return (
@@ -311,17 +274,15 @@ const CharacterV2 = ({
   const x = useTransform(
     scrollYProgress,
     [0.58, 0.88],
-    [`${distanceFromCenter * 4.5}vw`, "0vw"],
-    { clamp: true }
+    [`${distanceFromCenter * 4.5}vw`, "0vw"]
   );
-  const scale = useTransform(scrollYProgress, [0.58, 0.88], [0.6, 1], { clamp: true });
+  const scale = useTransform(scrollYProgress, [0.58, 0.88], [0.6, 1]);
   const y = useTransform(
     scrollYProgress,
     [0.58, 0.88],
-    [Math.abs(distanceFromCenter) * 32, 0],
-    { clamp: true }
+    [Math.abs(distanceFromCenter) * 32, 0]
   );
-  const opacity = useTransform(scrollYProgress, [0.55, 0.65], [0, 1], { clamp: true });
+  const opacity = useTransform(scrollYProgress, [0.55, 0.65], [0, 1]);
 
   return (
     <motion.div
@@ -356,117 +317,6 @@ const Bracket = ({ className }: { className: string }) => {
   );
 };
 
-const StickyPhaseCard = ({
-  i,
-  phase,
-  title,
-  tagline,
-  desc,
-  bullets,
-  cls,
-  progress,
-  range,
-  targetScale,
-}: {
-  i: number;
-  phase: string;
-  title: string;
-  tagline: string;
-  desc: string;
-  bullets: string[];
-  cls: string;
-  progress: any;
-  range: [number, number];
-  targetScale: number;
-}) => {
-  const container = useRef<HTMLDivElement>(null);
-  const scale = useTransform(progress, range, [1, targetScale], { clamp: true });
-
-  return (
-    <div
-      ref={container}
-      className="sticky top-0 flex items-center justify-center w-full min-h-[70vh] py-12"
-      style={{
-        zIndex: i + 1,
-      }}
-    >
-      <motion.div
-        style={{
-          scale,
-          top: `calc(10vh + ${i * 24}px)`,
-        }}
-        className={cn(
-          "relative w-full max-w-5xl rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.06)] shadow-2xl origin-top",
-          "bg-[rgba(20,19,18,0.7)] backdrop-blur-xl"
-        )}
-      >
-        <div className="p-8 sm:p-10 md:p-12">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            {/* Left Side: Title, Phase, Tagline & Main Description */}
-            <div className="md:col-span-5 flex flex-col justify-center text-left">
-              <span className={`roadmap-phase ${cls}`} style={{ display: "inline-block", width: "fit-content", marginBottom: "0.75rem" }}>
-                {phase}
-              </span>
-              <h4 style={{ fontSize: "1.85rem", fontWeight: "800", color: "var(--fg-1)", marginBottom: "0.5rem", lineHeight: "1.2" }}>
-                {title}
-              </h4>
-              <p className="text-accent font-semibold mb-4" style={{ fontSize: "0.95rem" }}>
-                {tagline}
-              </p>
-              <p style={{ fontSize: "0.95rem", color: "var(--fg-3)", lineHeight: "1.6", margin: 0 }}>
-                {desc}
-              </p>
-            </div>
-
-            {/* Right Side: Key Deliverables list */}
-            <div className="md:col-span-7 flex flex-col justify-center gap-3.5 border-t md:border-t-0 md:border-l border-[rgba(255,255,255,0.06)] pt-6 md:pt-0 md:pl-8 text-left">
-              <span className="text-[0.75rem] uppercase tracking-wider text-accent font-mono mb-1 block">Key deliverables</span>
-              {bullets.map((bullet: string, bIdx: number) => (
-                <div key={bIdx} className="flex items-start gap-3">
-                  <span className="text-accent text-sm mt-0.5 select-none">✓</span>
-                  <p style={{ fontSize: "0.9rem", color: "var(--fg-2)", lineHeight: "1.5", margin: 0 }}>
-                    {bullet}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-const StickyPhasesTimeline = ({ phases }: { phases: any[] }) => {
-  const container = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ["start start", "end end"],
-  });
-
-  return (
-    <div
-      ref={container}
-      className="relative flex w-full flex-col items-center justify-center pt-8 pb-[10vh]"
-    >
-      {phases.map((p, i) => {
-        // Calculate scaling factors so bottom cards stack behind top cards nicely
-        const targetScale = Math.max(0.85, 1 - (phases.length - i - 1) * 0.03);
-        return (
-          <StickyPhaseCard
-            key={i}
-            i={i}
-            {...p}
-            progress={scrollYProgress}
-            range={[i * 0.2, (i + 1) * 0.2]}
-            targetScale={targetScale}
-          />
-        );
-      })}
-    </div>
-  );
-};
-
 export default function Roadmap() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -490,11 +340,11 @@ export default function Roadmap() {
 
   // Transforms to fade Stage 1 out and Stage 2 in inside the sticky viewport
   // Extended the hold duration of the text (fully visible until 0.55 progress) so it stays legible for longer
-  const textStageOpacity = useTransform(smoothProgress, [0.0, 0.55, 0.65], [1, 1, 0], { clamp: true });
-  const textStageScale = useTransform(smoothProgress, [0.0, 0.55, 0.65], [1, 1, 0.95], { clamp: true });
+  const textStageOpacity = useTransform(smoothProgress, [0.0, 0.55, 0.65], [1, 1, 0]);
+  const textStageScale = useTransform(smoothProgress, [0.0, 0.55, 0.65], [1, 1, 0.95]);
 
-  const iconStageOpacity = useTransform(smoothProgress, [0.55, 0.65, 0.98], [0, 1, 1], { clamp: true });
-  const iconStageY = useTransform(smoothProgress, [0.55, 0.65], [40, 0], { clamp: true });
+  const iconStageOpacity = useTransform(smoothProgress, [0.55, 0.65, 0.98], [0, 1, 1]);
+  const iconStageY = useTransform(smoothProgress, [0.55, 0.65], [40, 0]);
 
   return (
     <>
@@ -698,7 +548,50 @@ export default function Roadmap() {
           <p className="section-desc">Five distinct phases designed for robust platform deployment.</p>
         </div>
 
-        <StickyPhasesTimeline phases={phases} />
+        <div className="phases-grid">
+          {phases.map((p, idx) => (
+            <motion.div
+              className={`phase-card-wrapper ${p.cls}`}
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
+            >
+              <TiltCard className="phase-card" scale={1.03} tiltLimit={10}>
+                <span
+                  className={`roadmap-phase ${p.cls}`}
+                  style={{
+                    display: "inline-block",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  {p.phase}
+                </span>
+                <h4
+                  style={{
+                    fontSize: "1.15rem",
+                    fontWeight: "700",
+                    color: "var(--fg-1)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  {p.title}
+                </h4>
+                <p
+                  style={{
+                    fontSize: "0.88rem",
+                    color: "var(--fg-3)",
+                    lineHeight: "1.65",
+                    margin: 0,
+                  }}
+                >
+                  {p.desc}
+                </p>
+              </TiltCard>
+            </motion.div>
+          ))}
+        </div>
       </section>
     </>
   );
