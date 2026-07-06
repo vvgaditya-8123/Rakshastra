@@ -72,9 +72,6 @@ function validateMessagingEnvField(field: MessagingPlatformEnvVar, value: string
   }
 
   if (field.key === "SLACK_ALLOWED_USERS") {
-    // Mirror the gateway's parse (gateway/platforms/slack.py): drop empty
-    // entries so a trailing/interior comma isn't rejected here. "*" is the
-    // allow-all wildcard the gateway honors.
     const parts = trimmed
       .split(",")
       .map((part) => part.trim())
@@ -131,6 +128,70 @@ export default function ChannelsPage() {
 
   const gatewayRunning = platforms.length > 0 && platforms[0].gateway_running;
 
+  // Monitored channels list state
+  const [channelSearch, setChannelSearch] = useState("");
+  const [activeTab, setActiveTab] = useState<"telegram" | "instagram" | "whatsapp">("telegram");
+
+  // Generate 50 Telegram, 40 Instagram, and 20 WhatsApp communities
+  const monitoredChannels = useMemo(() => {
+    const list: { platform: string; handle: string; members: number; status: string; risk: string }[] = [];
+    
+    // 50 Telegram
+    const tgAdjs = ["delhi", "goa", "mumbai", "punjab", "blr", "kasol", "party", "rave", "secure", "dark"];
+    const tgNouns = ["weed", "mdma", "trips", "plug", "stash", "delivery", "chitta", "acid", "pills", "connect"];
+    for (let i = 1; i <= 50; i++) {
+      const adj = tgAdjs[(i * 3) % tgAdjs.length];
+      const noun = tgNouns[(i * 7) % tgNouns.length];
+      list.push({
+        platform: "telegram",
+        handle: `@${adj}_${noun}_${i + 9}`,
+        members: Math.round(500 + (i * 123) % 4500),
+        status: i % 7 === 0 ? "OFF-DUTY" : "ACTIVE",
+        risk: i % 5 === 0 ? "CRITICAL" : i % 3 === 0 ? "HIGH" : "MEDIUM"
+      });
+    }
+
+    // 40 Instagram
+    const igAdjs = ["ecstasy", "acid", "coke", "psy", "trippy", "chill", "organic", "pure", "white", "snow"];
+    const igNouns = ["pills", "india", "goa", "vibe", "del", "mumb", "direct", "hustle", "express", "elite"];
+    for (let i = 1; i <= 40; i++) {
+      const adj = igAdjs[(i * 2) % igAdjs.length];
+      const noun = igNouns[(i * 9) % igNouns.length];
+      list.push({
+        platform: "instagram",
+        handle: `@${adj}_${noun}_${i + 15}`,
+        members: Math.round(1200 + (i * 245) % 8000),
+        status: i % 8 === 0 ? "OFF-DUTY" : "ACTIVE",
+        risk: i % 4 === 0 ? "CRITICAL" : i % 3 === 0 ? "HIGH" : "MEDIUM"
+      });
+    }
+
+    // 20 WhatsApp
+    const waNames = ["Goa Rave", "Delhi Nightlife", "Mumbai Stash", "Punjab Chitta", "Bangalore 420"];
+    const waConnects = ["Supplies", "Direct", "Group", "Network", "Connect", "Squad"];
+    for (let i = 1; i <= 20; i++) {
+      const name = waNames[(i * 4) % waNames.length];
+      const conn = waConnects[(i * 6) % waConnects.length];
+      list.push({
+        platform: "whatsapp",
+        handle: `${name} ${conn} #${i}`,
+        members: Math.round(80 + (i * 37) % 420),
+        status: i % 5 === 0 ? "SUSPENDED" : "ACTIVE",
+        risk: i % 3 === 0 ? "CRITICAL" : i % 2 === 0 ? "HIGH" : "MEDIUM"
+      });
+    }
+
+    return list;
+  }, []);
+
+  const filteredChannels = useMemo(() => {
+    return monitoredChannels.filter(c => {
+      const matchesSearch = c.handle.toLowerCase().includes(channelSearch.toLowerCase());
+      const matchesTab = c.platform === activeTab;
+      return matchesSearch && matchesTab;
+    });
+  }, [monitoredChannels, channelSearch, activeTab]);
+
   const load = useCallback(() => {
     return api
       .getMessagingPlatforms()
@@ -158,8 +219,6 @@ export default function ChannelsPage() {
 
   const handleSave = async () => {
     if (!editing) return;
-    // Only send fields the user actually filled in — leaving a field blank
-    // preserves the existing value rather than clobbering it.
     const env: Record<string, string> = {};
     Object.entries(draftEnv).forEach(([k, v]) => {
       if (v.trim()) env[k] = v.trim();
@@ -238,7 +297,6 @@ export default function ChannelsPage() {
       await api.restartGateway();
       showToast("Gateway restarting…", "success");
       setRestartNeeded(false);
-      // Give the gateway a moment to come up, then refresh status.
       setTimeout(() => void load(), 4000);
     } catch (e) {
       showToast(`Failed to restart: ${e}`, "error");
@@ -260,8 +318,7 @@ export default function ChannelsPage() {
       </Button>,
     );
     return () => setEnd(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setEnd, restarting]);
+  }, [setEnd, restarting, load]);
 
   const configured = useMemo(
     () => platforms.filter((p) => p.configured).length,
@@ -279,6 +336,93 @@ export default function ChannelsPage() {
   return (
     <div className="flex flex-col gap-6">
       <Toast toast={toast} />
+
+      {/* MONITORED SYNDICATE PLATFORMS */}
+      <div className="bg-[#151515] border border-white/5 rounded-xl p-5 flex flex-col gap-4 font-mono text-xs">
+        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-text-tertiary uppercase text-[10px] tracking-widest block mb-0.5">PLATFORM TELESCOPE</span>
+            <span className="text-white text-base font-bold">MONITORED SOCIAL CHANNELS</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge tone="destructive">110 CHANNELS MONITORED</Badge>
+          </div>
+        </div>
+
+        {/* Tab switcher */}
+        <div className="flex gap-2 items-center flex-wrap">
+          <button
+            onClick={() => setActiveTab("telegram")}
+            className={`px-3 py-1 border rounded cursor-pointer transition-colors duration-150 ${
+              activeTab === "telegram" ? "bg-[#E56A21]/20 border-[#E56A21] text-[#E56A21] font-bold" : "bg-[#1C1C1C] border-white/5 hover:border-white/20 text-white"
+            }`}
+          >
+            Telegram Channels (50)
+          </button>
+          <button
+            onClick={() => setActiveTab("instagram")}
+            className={`px-3 py-1 border rounded cursor-pointer transition-colors duration-150 ${
+              activeTab === "instagram" ? "bg-[#E56A21]/20 border-[#E56A21] text-[#E56A21] font-bold" : "bg-[#1C1C1C] border-white/5 hover:border-white/20 text-white"
+            }`}
+          >
+            Instagram Handles (40)
+          </button>
+          <button
+            onClick={() => setActiveTab("whatsapp")}
+            className={`px-3 py-1 border rounded cursor-pointer transition-colors duration-150 ${
+              activeTab === "whatsapp" ? "bg-[#E56A21]/20 border-[#E56A21] text-[#E56A21] font-bold" : "bg-[#1C1C1C] border-white/5 hover:border-white/20 text-white"
+            }`}
+          >
+            WhatsApp Groups (20)
+          </button>
+
+          <Input
+            value={channelSearch}
+            onChange={(e) => setChannelSearch(e.target.value)}
+            placeholder="Search channels..."
+            className="ml-auto bg-[#0C0C0C] border-white/5 w-[200px] h-8 font-mono text-[10px]"
+          />
+        </div>
+
+        {/* Monitored List */}
+        <div className="border border-white/5 rounded-lg overflow-hidden max-h-[300px] overflow-y-auto pr-1 scrollbar-none bg-[#0B0B0B]">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/5 text-text-tertiary text-[9px] uppercase font-bold">
+                <th className="p-3">CHANNEL / PAGE NAME</th>
+                <th className="p-3">EST. MEMBERS/SUBSCRIBERS</th>
+                <th className="p-3">TARGET RISK LEVEL</th>
+                <th className="p-3">GATEWAY MONITOR STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredChannels.map((c, idx) => (
+                <tr key={idx} className="border-b border-white/5 hover:bg-white/5 text-[10px]">
+                  <td className="p-3 text-white font-bold">{c.handle}</td>
+                  <td className="p-3 font-semibold">{c.members.toLocaleString()}</td>
+                  <td className="p-3">
+                    <Badge tone={c.risk === "CRITICAL" ? "destructive" : c.risk === "HIGH" ? "warning" : "outline"} className="text-[7.5px] font-bold uppercase">
+                      {c.risk}
+                    </Badge>
+                  </td>
+                  <td className="p-3">
+                    <Badge tone={c.status === "ACTIVE" ? "success" : "secondary"} className="text-[7.5px] font-bold uppercase">
+                      {c.status}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10 pt-4 my-2">
+        <h3 className="text-white font-bold text-sm font-mondwest uppercase tracking-wider mb-2">GATEWAY COGNITIVE PAIRING CONTROLS</h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          Pair live physical accounts (Telegram Bots, WhatsApp Web sessions) using the QR wizards below to intercept regional chats.
+        </p>
+      </div>
 
       {/* Restart banner */}
       {restartNeeded && (
@@ -374,7 +518,7 @@ export default function ChannelsPage() {
               {editing.env_vars.map((field: MessagingPlatformEnvVar) => (
                 <div className="grid gap-1.5" key={field.key}>
                   <div className="flex items-center gap-1.5">
-                    <Label htmlFor={`field-${field.key}`}>
+                     <Label htmlFor={`field-${field.key}`}>
                       {field.prompt || field.key}
                       {field.required ? " *" : ""}
                     </Label>
@@ -533,6 +677,15 @@ export default function ChannelsPage() {
                     showToast={showToast}
                   />
                 )}
+                {platform.id === "whatsapp" && (
+                  <WhatsAppOnboardingPanel
+                    onChanged={load}
+                    onRestartNeeded={() => setRestartNeeded(true)}
+                    platform={platform}
+                    setRestartNeeded={setRestartNeeded}
+                    showToast={showToast}
+                  />
+                )}
               </CardContent>
             </Card>
           );
@@ -681,12 +834,6 @@ function TelegramOnboardingPanel({
     setNewAllowedId("");
   };
 
-  // restart_started only means the `rakshastra gateway restart` child spawned —
-  // not that the restart will succeed (e.g. systemd linger missing, service
-  // manager failure). Poll the action status briefly and surface a non-zero
-  // exit via the manual-restart banner. Note: in no-service installs the
-  // child becomes the foreground gateway and never exits, so "still running
-  // when the window closes" counts as success.
   const watchRestartOutcome = async () => {
     for (let i = 0; i < 20; i++) {
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -749,13 +896,11 @@ function TelegramOnboardingPanel({
 
   const expiresIn = useMemo(
     () => (setup ? formatExpiry(setup.expires_at) : ""),
-    // tick keeps the memo fresh without recalculating on every render branch.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setup, tick],
   );
 
   return (
-    <div className="rounded-sm border border-border bg-background/35 p-4">
+    <div className="rounded-sm border border-border bg-background/35 p-4 mt-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button
           size="sm"
@@ -882,6 +1027,206 @@ function TelegramOnboardingPanel({
                 Cancel
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WhatsAppOnboardingPanel({
+  onChanged,
+  onRestartNeeded,
+  platform,
+  setRestartNeeded,
+  showToast,
+}: {
+  onChanged: () => Promise<void>;
+  onRestartNeeded: () => void;
+  platform: MessagingPlatform;
+  setRestartNeeded: (needed: boolean) => void;
+  showToast: (message: string, type: "success" | "error") => void;
+}) {
+  const [qrDataUrl, setQrDataUrl] = useState("");
+  const [phase, setPhase] = useState<
+    "idle" | "starting" | "waiting" | "ready" | "applying"
+  >("idle");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (phase !== "waiting") return;
+    let cancelled = false;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
+    const poll = async () => {
+      try {
+        const status = await api.getWhatsAppOnboardingStatus();
+        if (cancelled) return;
+
+        if (status.status === "ready") {
+          setPhase("ready");
+          setError("");
+          return;
+        }
+
+        if (status.status === "failed") {
+          setPhase("idle");
+          setQrDataUrl("");
+          setError(status.error || "WhatsApp pairing failed.");
+          return;
+        }
+
+        if (status.qr_payload) {
+          const dataUrl = await QRCode.toDataURL(status.qr_payload, {
+            errorCorrectionLevel: "M",
+            margin: 1,
+            width: 224,
+          });
+          setQrDataUrl(dataUrl);
+        }
+
+        timeout = setTimeout(poll, 2000);
+      } catch (pollError) {
+        if (cancelled) return;
+        setError(`Error checking status: ${pollError}`);
+        timeout = setTimeout(poll, 2000);
+      }
+    };
+
+    timeout = setTimeout(poll, 1000);
+    return () => {
+      cancelled = true;
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [phase]);
+
+  const start = async () => {
+    setPhase("starting");
+    setError("");
+    setQrDataUrl("");
+    try {
+      await api.startWhatsAppOnboarding();
+      setPhase("waiting");
+    } catch (startError) {
+      setPhase("idle");
+      setError(String(startError));
+    }
+  };
+
+  const cancel = async () => {
+    try {
+      await api.cancelWhatsAppOnboarding();
+    } catch {
+      // Ignored
+    }
+    setPhase("idle");
+    setQrDataUrl("");
+    setError("");
+  };
+
+  const apply = async () => {
+    setPhase("applying");
+    setError("");
+    try {
+      const result = await api.applyWhatsAppOnboarding();
+      setPhase("idle");
+      setQrDataUrl("");
+      if (result.restart_started) {
+        showToast("WhatsApp saved; gateway restarting…", "success");
+        setRestartNeeded(false);
+        setTimeout(() => void onChanged(), 4000);
+      } else if (result.restart_started === undefined && result.needs_restart) {
+        try {
+          await api.restartGateway();
+          showToast("WhatsApp saved; gateway restarting…", "success");
+          setRestartNeeded(false);
+          setTimeout(() => void onChanged(), 4000);
+        } catch (restartError) {
+          onRestartNeeded();
+          showToast(`WhatsApp saved; gateway restart failed: ${restartError}`, "error");
+        }
+      } else {
+        onRestartNeeded();
+        const detail = result.restart_error ? `: ${result.restart_error}` : "";
+        showToast(`WhatsApp saved; gateway restart failed${detail}`, "error");
+      }
+      await onChanged();
+    } catch (applyError) {
+      setPhase("ready");
+      setError(String(applyError));
+    }
+  };
+
+  return (
+    <div className="rounded-sm border border-border bg-background/35 p-4 mt-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          size="sm"
+          className="uppercase"
+          onClick={() => void start()}
+          disabled={phase === "starting" || phase === "waiting" || phase === "applying"}
+          prefix={phase === "starting" ? <Spinner /> : <QrCode className="h-4 w-4" />}
+        >
+          {phase === "starting" ? "Starting…" : "Set up with QR"}
+        </Button>
+        {platform.configured && (
+          <span className="text-xs text-muted-foreground">
+            Existing WhatsApp credentials are configured.
+          </span>
+        )}
+      </div>
+
+      {error && (
+        <div className="mt-3 border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      {phase === "waiting" && qrDataUrl && (
+        <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
+          <div className="grid gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge tone="warning">Waiting for Scan</Badge>
+            </div>
+            <div className="text-xs text-muted-foreground leading-relaxed">
+              <p>1. Open WhatsApp on your phone.</p>
+              <p>2. Tap Menu or Settings and select Linked Devices.</p>
+              <p>3. Point your phone to this screen to capture the code.</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-3 shrink-0">
+            <img
+              src={qrDataUrl}
+              alt="WhatsApp setup QR code"
+              className="h-56 w-56 bg-white p-2"
+            />
+            <Button size="sm" ghost onClick={() => void cancel()}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {(phase === "ready" || phase === "applying") && (
+        <div className="mt-4 flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <Badge tone="success">Pairing Successful!</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            WhatsApp credentials have been successfully paired and saved. Click Apply below to enable and restart the gateway.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => void apply()}
+              disabled={phase === "applying"}
+              prefix={phase === "applying" ? <Spinner /> : <Check className="h-4 w-4" />}
+            >
+              Apply & Enable
+            </Button>
+            <Button size="sm" ghost onClick={() => void cancel()}>
+              Cancel
+            </Button>
           </div>
         </div>
       )}
