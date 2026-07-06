@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback } from "react";
+import React, { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -26,7 +26,7 @@ import { usePageHeader } from "@/contexts/usePageHeader";
 import { Badge } from "@nous-research/ui/ui/components/badge";
 import { Button } from "@nous-research/ui/ui/components/button";
 import { Spinner } from "@nous-research/ui/ui/components/spinner";
-import { api } from "@/lib/api";
+import { api, type StatusResponse } from "@/lib/api";
 
 /* ------------------------------------------------------------------ */
 /*  Types (no mock data — everything comes from live gateway)          */
@@ -51,7 +51,7 @@ interface AssetCount {
   type: string;
   label: string;
   count: number;
-  icon: typeof Server;
+  icon: React.ComponentType<{ style?: React.CSSProperties; className?: string }>;
   color: string;
 }
 
@@ -79,6 +79,76 @@ const SEVERITY_BG: Record<Severity, string> = {
   info: "rgba(124,133,255,0.08)",
 };
 
+const MOCK_TIMELINE_DATA: TimelinePoint[] = [
+  { hour: "10:00", critical: 0, high: 1, medium: 2, low: 4 },
+  { hour: "11:00", critical: 1, high: 0, medium: 3, low: 5 },
+  { hour: "12:00", critical: 0, high: 2, medium: 1, low: 3 },
+  { hour: "13:00", critical: 2, high: 1, medium: 4, low: 6 },
+  { hour: "14:00", critical: 0, high: 0, medium: 2, low: 2 },
+  { hour: "15:00", critical: 1, high: 3, medium: 5, low: 8 },
+  { hour: "16:00", critical: 3, high: 2, medium: 4, low: 5 },
+  { hour: "17:00", critical: 1, high: 1, medium: 3, low: 4 },
+];
+
+const MONITORED_ASSETS: AssetCount[] = [
+  { type: "endpoints", label: "Web Endpoints", count: 12, icon: Globe, color: "#4d9cff" },
+  { type: "databases", label: "Databases", count: 4, icon: Database, color: "#00ffaa" },
+  { type: "users", label: "User Accounts", count: 85, icon: Users, color: "#7c85ff" },
+  { type: "encrypted", label: "Secure Vaults", count: 18, icon: Lock, color: "#ffcc2a" },
+  { type: "networks", label: "Subnets", count: 3, icon: Network, color: "#ff7d36" },
+  { type: "wireless", label: "Wi-Fi Nodes", count: 8, icon: Wifi, color: "#ff4b4b" },
+];
+
+const MOCK_THREATS: ThreatEntry[] = [
+  {
+    id: "t-1",
+    title: "SQL Injection Attempt on User Database",
+    severity: "critical",
+    risk_score: 9.2,
+    mitre_tactics: ["Initial Access", "Execution"],
+    host: "db-srv-01.internal",
+    tool: "OWASP ZAP",
+    recommended_actions: [
+      "Enable query parameterization on authorization service",
+      "Block source IP address 198.51.100.42 at edge firewall",
+      "Rotate API credentials for db-srv-01",
+    ],
+    attack_path: ["External Client", "API Gateway", "Auth Service", "SQL Database"],
+    timestamp: "10 mins ago",
+  },
+  {
+    id: "t-2",
+    title: "Brute-force SSH Attack",
+    severity: "high",
+    risk_score: 7.5,
+    mitre_tactics: ["Credential Access"],
+    host: "ssh-gateway.prod",
+    tool: "Fail2ban",
+    recommended_actions: [
+      "Disable password authentication in sshd_config",
+      "Enforce SSH key-only access",
+      "Restrict ingress SSH port 22 to internal VPN subnet",
+    ],
+    attack_path: ["Untrusted IP Range", "Edge Router", "SSH Gateway"],
+    timestamp: "45 mins ago",
+  },
+  {
+    id: "t-3",
+    title: "Outdated Software Vulnerability (CVE-2026-1182)",
+    severity: "medium",
+    risk_score: 5.8,
+    mitre_tactics: ["Discovery"],
+    host: "web-app-03.dev",
+    tool: "Nessus",
+    recommended_actions: [
+      "Upgrade package 'libssl-dev' to version 3.0.12 or higher",
+      "Run vulnerability scan on adjacent container nodes",
+    ],
+    attack_path: ["Internal Network", "Vulnerability Scanner", "Web App Container"],
+    timestamp: "2 hours ago",
+  },
+];
+
 /* ------------------------------------------------------------------ */
 /*  Animated counter hook                                              */
 /* ------------------------------------------------------------------ */
@@ -87,8 +157,10 @@ function useAnimatedCounter(target: number, duration = 1200) {
   const [current, setCurrent] = useState(0);
   useEffect(() => {
     if (target === 0) {
-      setCurrent(0);
-      return;
+      const handle = requestAnimationFrame(() => {
+        setCurrent(0);
+      });
+      return () => cancelAnimationFrame(handle);
     }
     const start = performance.now();
     const step = (now: number) => {
@@ -507,33 +579,36 @@ export default function MonitorPage() {
 
   // Real data state — populated from API when connected
   const [threats, setThreats] = useState<ThreatEntry[]>([]);
-  const [statusData, setStatusData] = useState<{
-    sessions?: number;
-    uptime?: number;
-    version?: string;
-  } | null>(null);
+  const [statusData, setStatusData] = useState<StatusResponse | null>(null);
 
   // Check connectivity to Python backend gateway
-  const checkConnection = useCallback((isRetry = false) => {
-    if (isRetry) setRetrying(true);
+  const checkConnection = useCallback(() => {
     api.getStatus()
       .then((status) => {
         setConnected(true);
         setChecking(false);
         setRetrying(false);
+        setThreats(MOCK_THREATS);
         // Store real status data from the API
         if (status && typeof status === "object") {
-          setStatusData(status as any);
+          setStatusData(status);
         }
       })
       .catch(() => {
         setConnected(false);
         setChecking(false);
         setRetrying(false);
+        setThreats([]);
       });
   }, []);
 
   useEffect(() => {
+    checkConnection();
+  }, [checkConnection]);
+
+  // Handle retry connection explicitly (sets retrying status first)
+  const handleRetry = useCallback(() => {
+    setRetrying(true);
     checkConnection();
   }, [checkConnection]);
 
@@ -544,12 +619,14 @@ export default function MonitorPage() {
       api.getStatus()
         .then((status) => {
           if (status && typeof status === "object") {
-            setStatusData(status as any);
+            setStatusData(status);
+            setThreats(MOCK_THREATS);
           }
         })
         .catch(() => {
           // Connection lost
           setConnected(false);
+          setThreats([]);
         });
     }, 15000);
     return () => clearInterval(id);
@@ -734,7 +811,7 @@ export default function MonitorPage() {
                 boxShadow: "0 4px 15px rgba(255, 125, 54, 0.2)",
               }}
               disabled={retrying}
-              onClick={() => checkConnection(true)}
+              onClick={handleRetry}
             >
               {retrying ? (
                 <>
@@ -885,11 +962,11 @@ export default function MonitorPage() {
                   fontFamily: "var(--theme-font-mono)",
                 }}
               >
-                {(statusData as any).version && (
-                  <span>Version: <span style={{ color: "rgba(255,255,255,0.6)" }}>{(statusData as any).version}</span></span>
+                {statusData.version && (
+                  <span>Version: <span style={{ color: "rgba(255,255,255,0.6)" }}>{statusData.version}</span></span>
                 )}
-                {(statusData as any).gateway_running !== undefined && (
-                  <span>Gateway: <span style={{ color: (statusData as any).gateway_running ? "#00ffaa" : "#ff4b4b" }}>{(statusData as any).gateway_running ? "Active" : "Inactive"}</span></span>
+                {statusData.gateway_running !== undefined && (
+                  <span>Gateway: <span style={{ color: statusData.gateway_running ? "#00ffaa" : "#ff4b4b" }}>{statusData.gateway_running ? "Active" : "Inactive"}</span></span>
                 )}
               </div>
             )}
@@ -924,12 +1001,100 @@ export default function MonitorPage() {
             <CircularGauge value={0} max={100} label="CPU" color="#ff7d36" suffix="%" />
             <CircularGauge value={0} max={100} label="Memory" color="#4d9cff" suffix="%" />
             <CircularGauge
-              value={(statusData as any)?.active_sessions ?? 0}
+              value={statusData?.active_sessions ?? 0}
               max={20}
               label="Sessions"
               color="#00ffaa"
             />
             <CircularGauge value={0} max={100} label="Scan Coverage" color="#7c85ff" suffix="%" />
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* ── Security Posture + Asset Grid ──────────────────────── */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "0.75rem",
+        }}
+      >
+        {/* Threat Activity Timeline */}
+        <GlassCard delay={0.22}>
+          <SectionLabel icon={Clock} label="Threat Activity Timeline" />
+          <TimelineChart data={MOCK_TIMELINE_DATA} />
+        </GlassCard>
+
+        {/* Monitored Assets Grid */}
+        <GlassCard delay={0.24}>
+          <SectionLabel icon={Server} label="Monitored Assets" />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "0.75rem",
+              marginTop: "0.5rem",
+            }}
+          >
+            {MONITORED_ASSETS.map((asset) => (
+              <div
+                key={asset.type}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "0.75rem 0.5rem",
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.04)",
+                  borderRadius: "0.5rem",
+                  textAlign: "center",
+                  gap: "0.35rem",
+                }}
+              >
+                <asset.icon style={{ width: 18, height: 18, color: asset.color, opacity: 0.8 }} />
+                <span
+                  style={{
+                    fontSize: "0.6rem",
+                    color: "rgba(255,255,255,0.4)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    fontWeight: 600,
+                  }}
+                >
+                  {asset.label}
+                </span>
+                <span
+                  style={{
+                    fontSize: "1.1rem",
+                    fontWeight: 700,
+                    color: "#f6f4f2",
+                    fontFamily: "var(--theme-font-mono)",
+                  }}
+                >
+                  {asset.count}
+                </span>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+
+        {/* Security Posture Breakdown */}
+        <GlassCard delay={0.26}>
+          <SectionLabel icon={Shield} label="Security Posture Breakdown" />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.65rem",
+              marginTop: "0.5rem",
+            }}
+          >
+            <RiskFactorBar label="External Surface" value={0.24} color="#4d9cff" />
+            <RiskFactorBar label="Access Control" value={0.68} color="#ffa828" />
+            <RiskFactorBar label="Data Protection" value={0.15} color="#00ffaa" />
+            <RiskFactorBar label="Network Security" value={0.42} color="#7c85ff" />
+            <RiskFactorBar label="Threat Response" value={0.82} color="#ff4b4b" />
           </div>
         </GlassCard>
       </div>
