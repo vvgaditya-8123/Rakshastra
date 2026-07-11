@@ -118,11 +118,14 @@ class TestCodexCloudflareHeaders:
 
 class TestPrimaryClientWiring:
     def test_init_wires_codex_headers_for_chatgpt_base_url(self):
+        """Init must store codex headers in _client_kwargs for chatgpt.com.
+        The OpenAI client is created lazily, so we verify _client_kwargs
+        directly instead of asserting on OpenAI() call args."""
         from run_agent import AIAgent
         token = _make_codex_jwt("acct-primary-init")
         with patch("run_agent.OpenAI") as mock_openai:
             mock_openai.return_value = MagicMock()
-            AIAgent(
+            agent = AIAgent(
                 api_key=token,
                 base_url="https://chatgpt.com/backend-api/codex",
                 provider="openai-codex",
@@ -131,7 +134,7 @@ class TestPrimaryClientWiring:
                 skip_context_files=True,
                 skip_memory=True,
             )
-            headers = mock_openai.call_args.kwargs.get("default_headers") or {}
+            headers = agent._client_kwargs.get("default_headers") or {}
             assert headers.get("originator") == "codex_cli_rs"
             assert headers.get("ChatGPT-Account-ID") == "acct-primary-init"
             assert headers.get("User-Agent", "").startswith("codex_cli_rs/")
@@ -188,7 +191,7 @@ class TestPrimaryClientWiring:
         from run_agent import AIAgent
         with patch("run_agent.OpenAI") as mock_openai:
             mock_openai.return_value = MagicMock()
-            AIAgent(
+            agent = AIAgent(
                 api_key="sk-or-test",
                 base_url="https://openrouter.ai/api/v1",
                 provider="openrouter",
@@ -197,7 +200,7 @@ class TestPrimaryClientWiring:
                 skip_context_files=True,
                 skip_memory=True,
             )
-            headers = mock_openai.call_args.kwargs.get("default_headers") or {}
+            headers = agent._client_kwargs.get("default_headers") or {}
             assert headers.get("originator") != "codex_cli_rs"
 
 
