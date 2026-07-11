@@ -37,6 +37,8 @@ PUBLIC_API_PATHS: frozenset[str] = frozenset({
     # liveness probe in
     # ``docs/agent-dashboard-public-url-contract.md`` (NAS side).
     "/api/status",
+    # REST API v1 status endpoint
+    "/api/v1/status",
     # Read-only config-defaults / schema feeds for the SPA's Config page.
     "/api/config/defaults",
     "/api/config/schema",
