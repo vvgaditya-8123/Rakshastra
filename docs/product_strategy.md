@@ -1,43 +1,68 @@
-# Rakshastra: Product Strategy Document
+# ☤ PRODUCT STRATEGY SPECIFICATION
+> **Business Plan, SWOT Matrix, Target Personas, and Dual-Monetization Models**
 
-## 1. Executive Summary
+This strategy document maps the product position, target audience, operational division of labor, and revenue models of the Rakshastra platform.
 
-Rakshastra is an autonomous, AI-native cyber investigation platform designed specifically for Small and Medium Enterprises (SMEs) and digital forensics teams. By combining a Gemini-first reasoning engine with multi-source footprint correlation, interactive relationship graph mapping, and structured explainable narratives, Rakshastra automates the complex operations of a modern Security Operations Center (SOC) at a fraction of the cost.
+---
 
-## 2. Who Uses Rakshastra?
-- **Corporate Threat Investigators**: Track phishing, crypto fraud, and credential theft attempts.
-- **Digital Forensics Teams**: Map digital footprints, resolve alias reuse, and compile timeline evidence reports.
-- **SMEs without Dedicated SOCs**: Obtain automated alerts, explainable risk explanations, and direct remediation advice.
+## 👥 1. Target User Personas
 
-## 3. What Pain it Solves
-Enterprise threat investigation platforms are prohibitively expensive and require highly skilled security analysts. Rakshastra resolves:
-- **Alert Fatigue**: Raw logs are automatically parsed, deduplicated, and resolved into unified operator profiles.
-- **Forensic Ambiguity**: Explains exactly why a threat score was assigned, detailing matched keyword packs, correlation reuse, and counter-evidence.
-- **Operational Overhead**: Replaces manual search queries with an autonomous task execution planner.
+| Persona | Core Needs | Primary Feature Used | Value Delivered |
+| :--- | :--- | :--- | :--- |
+| **SME SecOps Leads** | Fast triage, automated threat scoring, alert noise reduction. | **Threat Intel / Correlation** | Replaces dedicated SOC analysts, cuts security monitoring overhead by 90%. |
+| **Forensic Analysts** | Digital footprint mapping, link analysis, evidence gathering. | **Graph Engine & Timeline** | Groups aliases across Telegram/Discord, builds chronological evidence timelines. |
+| **SOC Integrators** | Programmable threat lookup API, pay-per-request billing options. | **x402 Algorand Gateway** | Removes long-term subscription locks; pay-as-you-go micro-transactions. |
 
-## 4. Monetization & Business Model
-Rakshastra operates on a dual-monetization strategy:
-1. **SaaS Web Subscription**: Unlimited access to the browser-based dashboard, graphical investigator portal, and notification gateway integrations.
-2. **Pay-Per-Request API Gateway (x402 / Algorand)**: Third-party developers, threat feeds, and external SOCs query Rakshastra's high-fidelity intelligence endpoints (e.g. `/api/v1/threat/analyze-text`, `/api/v1/entity/correlate`) using micro-payments backed by Algorand smart contracts.
+---
 
-## 5. AI-Native Operating Model
+## 💰 2. Dual-Monetization Architecture
 
-### What the AI Does
-- **Case Goal Planner**: Automatically establishes investigation goals (e.g. identify if actor is a drug seller, money mule, or bot operator).
-- **Dynamic Task Planning**: Generates and executes investigation tasks (username lookup, graph expansion) prioritizing by usefulness.
-- **Explainable Reasoning**: Synthesizes structured data into executive threat summaries and chronological narratives.
+Rakshastra executes a dual revenue structure designed to optimize enterprise SaaS and web3 micro-billing:
 
-### What the Human Does
-- **Onboarding and Configuration**: Feeds API credentials (Google Gemini API keys).
-- **Strategic Manual Actions**: Issues data preservation orders, requests subpoenas based on AI recommendations.
-- **Human-in-the-Loop Approval**: Reviews and approves/declines autonomous tasks in "Require Approval" mode.
+```
+                  ┌──────────────────────────────┐
+                  │      RAKSHASTRA REVENUE      │
+                  └──────────────┬───────────────┘
+                                 │
+         ┌───────────────────────┴───────────────────────┐
+         ▼                                               ▼
+┌──────────────────┐                            ┌──────────────────┐
+│   Enterprise     │                            │    Algorand      │
+│   SaaS Tier      │                            │  x402 Gateway    │
+├──────────────────┤                            ├──────────────────┤
+│ - Monthly Subs   │                            │ - Pay-as-you-go  │
+│ - Web Dashboard  │                            │ - SOC API access │
+│ - Alert Gateway  │                            │ - 0.05 ALGO/query│
+└──────────────────┘                            └──────────────────┘
+```
 
-## 6. How the System Fits the XPRIZE Business Criteria
-The Build with Gemini XPRIZE targets scalable, real-world AI impact:
-- **Massive Cost Reductions**: Shrinks SOC operations overhead by up to 90% via autonomous task planning.
-- **Real Proof of Value**: Generates detailed, auditable decision logs and explainable reports showing clear trace records.
+---
 
-## 7. System Architecture and Integration
-- **Web Dashboard**: Dark, professional, interactive GUI displaying investigation status, threat trees, and graph networks.
-- **Backend APIs**: Python FastAPI server executing the orchestrator, memory stores, and intelligence engines.
-- **Windows Companion App**: Local desktop scanner deployed on-premise to feed screenshot OCRs and manual logs back to the server.
+## 🧠 3. AI-Native division of labor
+
+Our operational model establishes a clear boundary between autonomous machine calculations and human strategic decisions:
+
+| What the Gemini-First AI Does | What the Human Investigator Does |
+| :--- | :--- |
+| **Target Goal Formulation** (Drug seller, fraudster, money mule categorization). | **Onboarding Credentials Setup** (Inputting API keys). |
+| **Task Queue Sequencing** (Looking up phone hashes, scanning domain registers). | **Action Approval Gate** (Signing off on high-risk system commands). |
+| **Narrative Synthesis** (Explainable AI reasoning chains and timeline creation). | **Legal Action Initiation** (Subpoenas, domain seizure requests). |
+
+---
+
+## 📈 4. Strategic SWOT Matrix
+
+```
+┌───────────────────────────────────────┬───────────────────────────────────────┐
+│              STRENGTHS                │             WEAKNESSES                │
+│ - Gemini-First: 1M+ token context.     │ - Relies on API keys for high-        │
+│ - Multi-source correlation engine.     │   fidelity full-scale loops.          │
+│ - Low cost: replaces a SOC team.      │ - Platform integrations require       │
+│ - Algorand x402 micro-billing gateway.│   active gateway listeners.           │
+├───────────────────────────────────────┼───────────────────────────────────────┤
+│            OPPORTUNITIES              │               THREATS                 │
+│ - Untapped market: SME cybersecurity.  │ - Rapidly shifting chat API           │
+│ - Integration with third-party threat │   protocols and restrictions.         │
+│   aggregators.                        │ - Competitive API ecosystems.         │
+└───────────────────────────────────────┴───────────────────────────────────────┘
+```
