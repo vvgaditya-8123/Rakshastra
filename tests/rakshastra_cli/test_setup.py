@@ -170,6 +170,8 @@ def test_setup_gateway_skips_service_install_when_systemctl_missing(monkeypatch,
     monkeypatch.setattr(setup_mod, "prompt_checklist", lambda _q, _items, pre=(), **k: list(pre))
     import rakshastra_cli.gateway as _gw_mod
     monkeypatch.setattr(_gw_mod, "_configure_platform", lambda *a, **k: None)
+    import sys
+    monkeypatch.setattr(sys, "platform", "linux")
     monkeypatch.setattr("platform.system", lambda: "Linux")
 
     monkeypatch.setattr(gateway_mod, "supports_systemd_services", lambda: False)
@@ -215,6 +217,8 @@ def test_setup_gateway_in_container_shows_docker_guidance(monkeypatch, capsys):
     monkeypatch.setattr(setup_mod, "prompt_checklist", lambda _q, _items, pre=(), **k: list(pre))
     import rakshastra_cli.gateway as _gw_mod
     monkeypatch.setattr(_gw_mod, "_configure_platform", lambda *a, **k: None)
+    import sys
+    monkeypatch.setattr(sys, "platform", "linux")
     monkeypatch.setattr("platform.system", lambda: "Linux")
 
     monkeypatch.setattr(gateway_mod, "supports_systemd_services", lambda: False)
@@ -329,7 +333,9 @@ def test_select_provider_and_model_warns_if_named_custom_provider_disappears(
     cfg["custom_providers"] = [{"name": "Local", "base_url": "http://localhost:8080/v1"}]
     save_config(cfg)
 
-    def fake_prompt_provider_choice(choices, default=0):
+    def fake_prompt_provider_choice(choices, default=0, *args, **kwargs):
+        if any("Google Gemini" in label for label in choices):
+            return 1
         current = load_config()
         current["custom_providers"] = []
         save_config(current)
