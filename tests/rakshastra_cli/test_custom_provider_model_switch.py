@@ -297,7 +297,9 @@ class TestCustomProviderModelSwitch:
         # choice (returns an index), then hands off to
         # ``_model_flow_named_custom`` with the provider_info built by
         # ``_named_custom_provider_map``.
-        def _pick_neuralwatt(labels, default=0):
+        def _pick_neuralwatt(labels, default=0, *args, **kwargs):
+            if any("Google Gemini" in label for label in labels):
+                return 1
             for i, label in enumerate(labels):
                 if "NeuralWatt" in label:
                     return i
@@ -410,7 +412,9 @@ class TestCustomProviderModelSwitch:
         monkeypatch.setenv("NEURALWATT_API_BASE", "https://api.neuralwatt.com/v1")
         monkeypatch.setenv("NEURALWATT_API_KEY", "sk-live-neuralwatt-secret")
 
-        def _pick_neuralwatt(labels, default=0):
+        def _pick_neuralwatt(labels, default=0, *args, **kwargs):
+            if any("Google Gemini" in label for label in labels):
+                return 1
             for i, label in enumerate(labels):
                 if "NeuralWatt" in label:
                     return i
