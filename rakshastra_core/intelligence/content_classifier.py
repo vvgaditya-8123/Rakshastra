@@ -55,7 +55,7 @@ class DrugIntelligenceEngine:
         # 2. Emoji analysis
         matched_emojis = self.slang_engine.detect_emojis(text)
         if matched_emojis:
-            emoji_score = min(0.15, 0.05 * len(matched_emojis))
+            emoji_score = min(0.15, 0.15 * len(matched_emojis))
             score += emoji_score
             reasons.append(f"Matched {len(matched_emojis)} drug emojis")
 
