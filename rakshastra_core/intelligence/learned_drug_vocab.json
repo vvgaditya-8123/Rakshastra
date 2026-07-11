@@ -1,0 +1,657 @@
+{
+  "ecstasy": {
+    "category": "mdma",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "molly": {
+    "category": "mdma",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "mandy": {
+    "category": "mdma",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "md": {
+    "category": "mdma",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "mumbai rolling": {
+    "category": "mdma",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "rolls": {
+    "category": "mdma",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "ganja": {
+    "category": "weed",
+    "confidence": 0.9,
+    "source": "seed+llm"
+  },
+  "stuff": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "greens": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "maal": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "bhang": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "hash": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "charas": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "kush": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "og": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "haze": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "diesel": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "purp": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "loud": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "gas": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "fire": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "pressure": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "exotic": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "runtz": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "gelato": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "sativa": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "indica": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "hybrid": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "joint": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "blunt": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "bong": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "edible": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "dab": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "wax": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "shatter": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "rosin": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "thc": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "cbd": {
+    "category": "weed",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "coke": {
+    "category": "cocaine",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "blow": {
+    "category": "cocaine",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "snow": {
+    "category": "cocaine",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "white": {
+    "category": "cocaine",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "didi": {
+    "category": "cocaine",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "crack": {
+    "category": "cocaine",
+    "confidence": 0.9,
+    "source": "seed+llm"
+  },
+  "rock": {
+    "category": "cocaine",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "ice": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "glass": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "crystal": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "meth": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "speed": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "crank": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "tina": {
+    "category": "meth",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "chitta": {
+    "category": "heroin",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "smack": {
+    "category": "heroin",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "brown sugar": {
+    "category": "heroin",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "dope": {
+    "category": "heroin",
+    "confidence": 0.9,
+    "source": "seed+llm"
+  },
+  "tar": {
+    "category": "heroin",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "junk": {
+    "category": "heroin",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "acid": {
+    "category": "lsd",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "tabs": {
+    "category": "lsd",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "blotter": {
+    "category": "lsd",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "microdot": {
+    "category": "lsd",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "trip": {
+    "category": "lsd",
+    "confidence": 0.7,
+    "source": "learned"
+  },
+  "xanax": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "bars": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "benzos": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "percocet": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "percs": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "oxy": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "oxycodone": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "hydrocodone": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "fentanyl": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "adderall": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "tramadol": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "diazepam": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "valium": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "lean": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "codeine": {
+    "category": "pills",
+    "confidence": 0.9,
+    "source": "seed+llm"
+  },
+  "promethazine": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "script": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "scripts": {
+    "category": "pills",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "shrooms": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "mushrooms": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "dmt": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "ketamine": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "pcp": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "ayahuasca": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "mescaline": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "peyote": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "k2": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "spice": {
+    "category": "psychedelics",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "ghb": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "poppers": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "meow meow": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "mephedrone": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "bath salts": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "opium": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "afeem": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "morphine": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "nasha": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "nashe": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "sulfa": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "gard": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "garad": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "pudiya": {
+    "category": "other",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "plug": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "stash": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "dealer": {
+    "category": "transaction",
+    "confidence": 0.9,
+    "source": "seed+llm"
+  },
+  "trap": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "pack": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "score": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "re-up": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "reup": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "drop": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "dead drop": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "wickr": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "dm for menu": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "delivery": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "shipping": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "overnight": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "upi": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "crypto": {
+    "category": "transaction",
+    "confidence": 0.9,
+    "source": "seed+llm"
+  },
+  "btc": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "bitcoin": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "monero": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "cashapp": {
+    "category": "transaction",
+    "confidence": 0.7,
+    "source": "seed+llm"
+  },
+  "cannabis": {
+    "category": "handle_derived",
+    "confidence": 0.5,
+    "source": "handle_frequent"
+  },
+  "pain": {
+    "category": "handle_derived",
+    "confidence": 0.5,
+    "source": "handle_frequent"
+  },
+  "canna": {
+    "category": "handle_derived",
+    "confidence": 0.5,
+    "source": "handle_frequent"
+  },
+  "asap": {
+    "category": "handle_derived",
+    "confidence": 0.5,
+    "source": "handle_frequent"
+  },
+  "heroin": {
+    "category": "handle_derived",
+    "confidence": 0.9,
+    "source": "handle_seed_match"
+  }
+}

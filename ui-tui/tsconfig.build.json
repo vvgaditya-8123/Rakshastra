@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@rakshastra/ink": ["src/types/rakshastra-ink.d.ts"]
+    }
+  }
+}

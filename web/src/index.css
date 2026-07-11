@@ -1,0 +1,380 @@
+@import 'tailwindcss';
+/* `fonts.css` must come BEFORE `globals.css`: as of @nous-research/ui 0.14.x,
+   `globals.css` only declares the `--font-*` CSS variables (Collapse, Rules
+   Compressed/Expanded, Mondwest). The `@font-face` registrations live in
+   `fonts.css`, so without this import the DS variables resolve to font
+   families the browser never loads and components fall back to a system
+   stack (Tabs, Segmented, Typography, Buttons, etc. all look unstyled). */
+@import '@nous-research/ui/styles/fonts.css';
+@import '@nous-research/ui/styles/globals.css';
+
+/* Scan the published design-system bundle so its utility classes survive
+   Tailwind's JIT purge. */
+@source '../node_modules/@nous-research/ui/dist';
+
+/* ------------------------------------------------------------------ */
+/* JetBrains Mono — bundled for the embedded TUI (/chat tab).          */
+/* Gives the terminal a proper monospace font even on systems where    */
+/* the user doesn't have one installed locally; xterm.js picks it up   */
+/* via ChatPage's `fontFamily` option.                                 */
+/* Apache-2.0.                                                         */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts-terminal/JetBrainsMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts-terminal/JetBrainsMono-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts-terminal/JetBrainsMono-Italic.woff2') format('woff2');
+}
+
+/* ------------------------------------------------------------------ */
+/* Rakshastra Agent — Nous DS with the LENS_0 (Rakshastra teal) palette applied
+   statically as the default dashboard theme. */
+/* ------------------------------------------------------------------ */
+
+:root {
+  /* LENS_0 — from design-language/src/ui/components/overlays/index.tsx.
+     These are the defaults for the `default` (Rakshastra Dark) dashboard theme;
+     ThemeProvider rewrites them as inline styles when a user switches themes. */
+  --foreground: color-mix(in srgb, #ffffff 0%, transparent);
+  --foreground-base: #ffffff;
+  --foreground-alpha: 0;
+  --midground: color-mix(in srgb, #ff7d36 100%, transparent);
+  --midground-base: #ff7d36;
+  --midground-alpha: 1;
+  --background: color-mix(in srgb, #0a0908 100%, transparent);
+  --background-base: #0a0908;
+  --background-alpha: 1;
+
+  /* Typography tokens — rewritten by ThemeProvider. Defaults match the
+     system stack so themes that don't override look native. */
+  --theme-font-sans: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --theme-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo,
+    Consolas, monospace;
+  --theme-font-display: var(--theme-font-sans);
+  --theme-base-size: 15px;
+  --theme-line-height: 1.55;
+  --theme-letter-spacing: 0;
+
+  /* Layout tokens. */
+  --radius: 0.5rem;
+  --theme-radius: 0.5rem;
+  --theme-spacing-mul: 1;
+  --theme-density: comfortable;
+
+  /* Data-series accents — consumed by Analytics + Models pages for the
+     input-vs-output token visualisations (chart bars, table values,
+     legend swatches). Defaults are tuned for the Rakshastra-dark LENS_0
+     look: orange input + emerald-400 output read as warm/cool against
+     the dark canvas. Themes override via ThemeProvider, which emits
+     these as `--series-input-token` / `--series-output-token`. */
+  --series-input-token: #ff7d36;
+  --series-output-token: #34d399;
+}
+
+/* Theme tokens cascade into the document root so every descendant inherits
+   the font stack, base size, and letter spacing without explicit calls. */
+html {
+  font-family: var(--theme-font-sans);
+  font-size: var(--theme-base-size);
+  line-height: var(--theme-line-height);
+  letter-spacing: var(--theme-letter-spacing);
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--theme-font-sans);
+  min-height: 0;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+code, kbd, pre, samp, .font-mono, .font-mono-ui {
+  font-family: var(--theme-font-mono);
+}
+
+/* Density: scale the shadcn spacing utilities via a multiplier. The DS
+   components use `p-N` / `gap-N` / `space-*` classes which resolve against
+   Tailwind's spacing scale; multiplying `--spacing` at :root scales them
+   all proportionally in Tailwind v4. */
+@theme inline {
+  --spacing: calc(0.25rem * var(--theme-spacing-mul, 1));
+  --font-sans: var(--theme-font-sans);
+  --font-mono: var(--theme-font-mono);
+}
+
+#root {
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    min-height: 100dvh;
+    height: auto;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+/* Nousnet's rakshastra-agent layout bumps `small` and `code` to readable
+   dashboard sizes. Keep in sync. */
+small { font-size: 1.0625rem; }
+code { font-size: 0.875rem; }
+
+/* Shadcn-compat tokens.
+   The dashboard's page code predates the Nous DS and uses shadcn-style
+   utility classes (bg-card, text-muted-foreground, border-border, etc.)
+   extensively. Rather than rewrite every call site, we expose those
+   tokens on top of the Nous palette so classes continue to resolve. */
+@theme inline {
+  /* Remap foreground to midground so `text-foreground` / `bg-foreground`
+     stay visible — in LENS_0, `--foreground` itself has alpha 0. */
+  --color-foreground: var(--midground);
+
+  --color-card: color-mix(in srgb, var(--midground-base) 4%, var(--background-base));
+  --color-card-foreground: var(--midground);
+  --color-primary: var(--midground);
+  --color-primary-foreground: var(--background-base);
+  --color-secondary: color-mix(in srgb, var(--midground-base) 6%, var(--background-base));
+  --color-secondary-foreground: var(--midground);
+  --color-muted: color-mix(in srgb, var(--midground-base) 8%, var(--background-base));
+  /* Routes the shadcn `muted-foreground` slot through the DS semantic
+     text-secondary token (defaults to midground 80%) so legacy call
+     sites that use `text-muted-foreground` get a readable color
+     instead of the old 55%-transparent default. */
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: color-mix(in srgb, var(--midground-base) 10%, var(--background-base));
+  --color-accent-foreground: var(--midground);
+  --color-destructive: #fb2c36;
+  --color-destructive-foreground: #ffffff;
+  --color-success: #4ade80;
+  --color-warning: #ffbd38;
+  --color-border: color-mix(in srgb, var(--midground-base) 15%, transparent);
+  --color-input: color-mix(in srgb, var(--midground-base) 15%, transparent);
+  --color-ring: var(--midground);
+  --color-popover: color-mix(in srgb, var(--midground-base) 4%, var(--background-base));
+  --color-popover-foreground: var(--midground);
+
+  --radius-sm: calc(var(--theme-radius) - 4px);
+  --radius-md: calc(var(--theme-radius) - 2px);
+  --radius-lg: var(--theme-radius);
+  --radius-xl: calc(var(--theme-radius) + 4px);
+}
+
+
+/* Collapsed sidebar tooltip entrance — skipped when moving between items. */
+@keyframes sidebar-tooltip-in {
+  from { opacity: 0; transform: translateY(-50%) translateX(-4px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+/* Toast animations used by `components/Toast.tsx`. */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(16px); }
+}
+
+/* Generic fade + dialog entrance used by popovers and confirm dialogs. */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Hide scrollbar utility — used by the header's overflow-x nav row. */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* System UI-monospace stack — distinct from `font-courier` (Courier
+   Prime), used for dense data readouts where the display font would
+   break the grid. Routes through the theme's mono stack so themes
+   with a different monospace (JetBrains Mono, IBM Plex Mono, etc.)
+   still apply here. */
+.font-mono-ui {
+  font-family: var(--theme-font-mono);
+}
+
+/* Subtle grain overlay for badges. */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  background: repeating-conic-gradient(currentColor 0% 25%, #0000 0% 50%) 0 0 /
+    2px 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Ambient background depth & animations — matching landing page       */
+/* ------------------------------------------------------------------ */
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.8; transform: scale(1) translate(0, 0); }
+  50%      { opacity: 1; transform: scale(1.05) translate(1%, -1%); }
+}
+
+body {
+  background: #050505 !important;
+  position: relative;
+}
+
+/* Deep ambient glow layer — breathing radial gradients */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -10%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 15%, rgba(255, 125, 54, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 50% 90%, rgba(255, 75, 75, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 80% 60%, rgba(0, 255, 170, 0.04) 0%, transparent 40%);
+  animation: pulseGlow 12s ease-in-out infinite alternate;
+}
+
+/* Premium noise/grain texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* Make layout containers transparent so body background is visible */
+#root,
+#root > div,
+.bg-background-base {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Slightly darken panel wrappers for readability with glass blur */
+.border-border, 
+.border-current\/20 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Translucent glassmorphism for cards, logs, code, and secondary panels */
+.bg-card,
+.bg-secondary\/30,
+pre {
+  background-color: rgba(255, 255, 255, 0.015) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* High contrast text overrides */
+.text-text-primary, 
+.text-foreground, 
+h1, h2, h3, h4, h5, h6 {
+  color: #f6f4f2 !important;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+}
+
+.text-text-secondary {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Make orange links, icons, and status indicators pop */
+.text-primary, 
+.text-midground, 
+.text-warning {
+  color: #ff7d36 !important;
+  filter: drop-shadow(0 0 6px rgba(255, 125, 54, 0.12));
+}
+
+/* ------------------------------------------------------------------ */
+/* Page-level animation utilities                                      */
+/* ------------------------------------------------------------------ */
+
+@keyframes fade-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Utility class for staggered entrance animations */
+.animate-fade-in {
+  animation: fade-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-fade-in-d1 { animation-delay: 0.05s; }
+.animate-fade-in-d2 { animation-delay: 0.1s; }
+.animate-fade-in-d3 { animation-delay: 0.15s; }
+.animate-fade-in-d4 { animation-delay: 0.2s; }
+.animate-fade-in-d5 { animation-delay: 0.25s; }
+.animate-fade-in-d6 { animation-delay: 0.3s; }
+
+/* Glow pulse for status indicators */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Shimmer loading skeleton */
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 30%, rgba(255,125,54,0.08) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
