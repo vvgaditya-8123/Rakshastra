@@ -1,0 +1,10 @@
+# x402 / Algorand Payment Configuration
+payments:
+  provider: algorand
+  network: testnet  # testnet or mainnet
+  price_per_request_algo: 0.05
+  recipient_wallet_address: "RAKSHASTRA_ALGORAND_WALLET_ADDRESS_PLACEHOLDER"
+  protected_endpoints:
+    - /api/v1/threat/analyze-text
+    - /api/v1/entity/correlate
+    - /api/v1/report/generate

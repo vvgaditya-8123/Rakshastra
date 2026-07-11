@@ -1,0 +1,6 @@
+# Google Gemini Configuration
+model:
+  provider: gemini
+  default: gemini-1.5-flash
+  api_key_env_var: GEMINI_API_KEY
+  base_url: https://generativelanguage.googleapis.com/v1

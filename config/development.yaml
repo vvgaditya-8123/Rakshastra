@@ -1,0 +1,5 @@
+# Development Settings
+debug: true
+log_level: DEBUG
+approval_mode: auto_execute  # auto_execute, suggest_only, require_approval
+cache_enabled: false

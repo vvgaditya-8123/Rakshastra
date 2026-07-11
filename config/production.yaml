@@ -1,0 +1,5 @@
+# Production Settings
+debug: false
+log_level: INFO
+approval_mode: require_approval
+cache_enabled: true
