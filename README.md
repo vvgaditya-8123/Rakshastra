@@ -1,134 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # Rakshastra ☤
 
-> **The Autonomous Security Engineer for SMEs**  
-> *The AI Security Operating System for Modern Businesses*
+> **Autonomous AI-Powered Cyber Investigation Platform**  
+> *The Gemini-First Security Operating System with Algorand-backed x402 Pay-Per-Request APIs*
 
 ---
 
-## Problem
+## What is Rakshastra?
 
-Small and Medium Enterprises (SMEs) face critical cybersecurity challenges:
-- **No Dedicated SOCs**: Most SMEs cannot afford 24/7 Security Operations Centers.
-- **Prohibitive Costs**: Enterprise-grade security suites are expensive and complex to configure.
-- **Skilled Talent Shortage**: Cybersecurity talent is scarce, leaving SMEs vulnerable to targeted attacks, ransomware, and compliance violations.
+Rakshastra is an autonomous AI-native threat intelligence and investigation platform built to identify, resolve, and explain cyber threats across modern corporate communication channels. It acts as an autonomous cyber investigator, analyzing multi-source footprints (Telegram, WhatsApp, Discord, Email, screenshots, and PDFs), mapping actor connection graphs, and generating explainable intelligence reports.
 
 ---
 
-## Vision
+## Key Pillars
 
-Rakshastra acts as an **Autonomous Security Operating System for Modern Businesses**—providing continuous threat identification, automated compliance audits, and intelligent configuration hardening without requiring a dedicated security team.
+### 1. Gemini-First Core Reasoning
+Rakshastra is built from the ground up for the **Google Gemini** family of models, utilizing its massive context window and advanced reasoning capabilities to perform structured cyber defense operations.
+
+### 2. Multi-Source Correlation
+Correlates indicators (phones, wallet addresses, handles, domains, URLs, invitation links) across separate channels and platforms (WhatsApp, Discord, Telegram, Email, and OCR images) to detect infrastructure reuse and identify threat operator profiles.
+
+### 3. Explainable AI (XAI)
+Generates human-readable markdown reports and structured JSON detailing:
+- Executive summaries of threat alerts.
+- Logical step-by-step reasoning chains.
+- Counter-evidence/gaps explaining confidence scores.
+- Actionable investigator recommendations.
+
+### 4. x402 Pay-Per-Request payment architecture
+Supports Algorand-based payment verification hooks for pay-per-request API monetization, enabling secure, decentralised billing for production-grade threat lookup and intelligence endpoints.
+
+### 5. Windows Desktop Companion App
+Integrates with a native Windows app distributed via `winget` for local scanning, credential loading, and offline/on-premise deployment.
 
 ---
 
-## Architecture
-
-Rakshastra is built on a structured execution stack, transforming raw model inference into a robust security daemon:
+## System Architecture
 
 ```mermaid
 graph TD
-    A[Rakshastra Bootloader] --> B[Rakshastra Core]
-    B --> C[Knowledge Graph]
-    B --> D[Security Memory]
-    B --> E[Planner]
-    E --> F[Tool Executor]
-    F --> G[Skills]
-    G --> H[Security Operating System]
+    A[Multi-Source Ingestion] --> B[Autonomous Orchestrator]
+    B --> C[Threat Intelligence Engine]
+    B --> D[Entity Resolution Engine]
+    B --> E[Graph Engine]
+    B --> F[Multi-Source Correlation Engine]
+    B --> G[Explainable AI Reasoning Engine]
+    B --> H[Investigation Timeline Engine]
+    G --> I[JSON & Markdown Reports]
 ```
 
-- **Rakshastra Bootloader**: Initializes environment context, active profiles, and core dependencies.
-- **Rakshastra Core**: Orchestrates conversation, manages agent iterations, and drives the reasoning loop.
-- **Knowledge Graph**: Maps enterprise digital assets, dependencies, and network topology.
-- **Security Memory**: Persists security history, incident trails, and past system states using FTS5 search.
-- **Planner**: Generates step-by-step diagnostic actions, schedules scans, and designs mitigation strategies.
-- **Tool Executor**: Safely runs system commands, executes diagnostic scripts, and navigates environments.
-- **Skills**: Encapsulates playbooks, compliance guidelines, and security verification procedures.
-- **Security Operating System**: The unified, self-healing outcome providing continuous protection.
+- **Autonomous Orchestrator**: Case Goal Planner, Dynamic Task Planning, and Evidence Collection Queue.
+- **Threat Intelligence Engine**: Modular intelligence packs for scam, crypto fraud, and phishing detection.
+- **Entity Resolution Engine**: Resolves identities, groups aliases, and extracts indicators.
+- **Graph Engine**: Visualizes relationships with force-directed layouts.
+- **Multi-Source Correlation Engine**: Tracks identifier reuse and matches across history.
+- **Explainable AI Reasoning Engine**: Synthesizes structured data into investigator-friendly narratives.
+- **Investigation Timeline Engine**: Chronological step replay and state reconstruction.
 
 ---
 
-## Features
+## Installation & Setup
 
-- **Continuous Vulnerability Assessment**: Periodically scans systems, code repos, and ports.
-- **Isolated Execution Sandboxing**: Executes diagnostic tools within sandboxed Docker/SSH containers to prevent damage.
-- **Closed Learning Loop**: Autonomously extracts new security playbooks and refines existing skills after resolving incidents.
-- **Multi-Platform Security Gateway**: Sends real-time threat alerts and receives commands via Telegram, Discord, Slack, and WhatsApp.
-- **Cron Scheduling**: Automates daily posture checks, weekly compliance reports, and regular backup validation.
+### Requirements
+- Python 3.10+
+- Node.js (for Vite web dashboard)
+- Google Gemini API Key
+
+### Backend Setup
+1. Clone the repository and navigate to the project root:
+   ```bash
+   git clone https://github.com/username/rakshastra.git
+   cd rakshastra
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -e .
+   ```
+4. Set your Google Gemini API credential:
+   ```bash
+   $env:GEMINI_API_KEY="your-api-key"
+   ```
+5. Run the web server:
+   ```bash
+   python rakshastra_cli/web_server.py
+   ```
+
+### Frontend Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd web
+   ```
+2. Install package dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## Roadmap
+## Verification & Tests
 
-- [ ] **Security Knowledge Graph**: Integrate CVE mappings and live dependency graphs.
-- [ ] **Expanded Toolset**: Package masscan, nmap, and OWASP ZAP wrapper integrations.
-- [ ] **Autonomous Mitigation**: Implement automated hot-patching and security group configuration.
-- [ ] **Compliance Engine**: Built-in support for automated SOC2, HIPAA, and ISO27001 audits.
-
----
-
-## Folder Structure
-
-- [`agent/`](agent): Core agent logic, memory consolidation, and reasoning.
-- [`tools/`](tools): Tool wrappers for terminal backends (Docker, local, SSH), browser automation, and web searching.
-- [`skills/`](skills): Predefined security skills, checklists, and compliance templates.
-- [`optional-skills/`](optional-skills): Specialized but inactive skills for custom security scenarios.
-- [`gateway/`](gateway): Platform integrations (Slack, Telegram, Discord, Signal) for notification and remote control.
-- [`cli.py`](cli.py): Interactive command-line client.
-- [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml): Deployment configurations.
-
----
-
-## Developer Guide
-
-### Setup
-
-Install the dependencies and set up the development environment:
-
+To execute tests and verify all core engines:
 ```bash
-uv pip install -e ".[all,dev]"
+python -m pytest tests/
 ```
-
-Run tests to verify the setup:
-
-```bash
-scripts/run_tests.sh
-```
-
-### Contributing
-
-See [AGENTS.md](AGENTS.md) for contribution guidelines, core invariants, and design principles.
