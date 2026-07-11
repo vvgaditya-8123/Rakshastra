@@ -18,8 +18,8 @@
 - [x] Implement Phase 3G.8: Logging & Explanatory Audit Compliance Engine
 - [x] Connect Phase 3G Engines to the CLI & Agent Tools (`tools/cyber_intelligence_tools.py`)
 - [x] Completely scrub all "Nous Research" branding and references from CLI, parser, setup, plugins, docs, and tests
-- [ ] Implement Classified Skills (network-scan, docker-audit, etc.)
-- [ ] Implement Tool Permissions (Capability & Permission layers)
-- [ ] Expose Security Tools (`tools/security_tools.py`)
-- [ ] Build Evidence Capturing & Reporting Pipelines
-- [ ] Build Threat Engine, Asset Graph integration, and dashboard
+- [x] Implement Classified Skills (network-scan, docker-audit, etc.)
+- [x] Implement Tool Permissions (Capability & Permission layers)
+- [x] Expose Security Tools (`tools/security_tools.py`)
+- [x] Build Evidence Capturing & Reporting Pipelines
+- [x] Build Threat Engine, Asset Graph integration, and dashboard
