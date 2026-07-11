@@ -66,5 +66,8 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "app-builder-bin": "^5.0.0-alpha.10"
   }
 }

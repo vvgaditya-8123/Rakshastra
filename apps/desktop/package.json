@@ -1,0 +1,105 @@
+{
+  "name": "rakshastra-desktop",
+  "version": "1.0.0",
+  "description": "Rakshastra Cyber Defense Agent — Desktop Application",
+  "private": true,
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "node scripts/dev.cjs",
+    "build": "tsc -p tsconfig.json && node scripts/copy-preload.cjs",
+    "builder": "node scripts/run-electron-builder.cjs",
+    "pack": "npm run build && npm run builder -- --dir",
+    "dist": "npm run build && npm run builder",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "electron-is-dev": "^3.0.1"
+  },
+  "devDependencies": {
+    "app-builder-bin": "^4.2.0",
+    "electron": "40.9.3",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.7.3"
+  },
+  "build": {
+    "appId": "com.rakshastra.agent",
+    "productName": "Rakshastra",
+    "electronVersion": "40.9.3",
+    "files": [
+      "dist-electron/**/*",
+      "!node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../../rakshastra_cli/web_dist",
+        "to": "web-dist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../",
+        "to": "backend",
+        "filter": [
+          "**/*",
+          "!**/release/**/*",
+          "!**/dist-electron/**/*",
+          "!**/node_modules/**/*",
+          "!**/.git/**/*",
+          "!**/.venv/**/*",
+          "!**/venv/**/*",
+          "!**/install.log"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "./release/.icon-ico/icon.ico",
+      "artifactName": "Rakshastra-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./release/.icon-ico/icon.ico",
+      "uninstallerIcon": "./release/.icon-ico/icon.ico",
+      "installerHeaderIcon": "./release/.icon-ico/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Rakshastra"
+    },
+    "portable": {
+      "artifactName": "Rakshastra-Portable-${version}.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "../../assets/logo.png",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "../../assets/logo.png",
+      "category": "Development"
+    },
+    "directories": {
+      "output": "release"
+    }
+  }
+}
