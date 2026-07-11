@@ -947,6 +947,11 @@ def init_agent(
                     )
         
         agent._client_kwargs = client_kwargs  # stored for rebuilding after interrupt
+        # Initialize client to None — it will be created lazily by
+        # _ensure_primary_openai_client on first use.  Setting it here
+        # ensures the attribute always exists (backward compat for tests
+        # and external code that accesses agent.client).
+        agent.client = None
 
         # Enable fine-grained tool streaming for Claude on OpenRouter.
         # Without this, Anthropic buffers the entire tool call and goes
