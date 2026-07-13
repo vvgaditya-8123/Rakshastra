@@ -14,6 +14,7 @@
   "dependencies": {
     "@nous-research/ui": "0.18.2",
     "@observablehq/plot": "^0.6.17",
+    "@perawallet/connect": "^1.0.4",
     "@rakshastra/shared": "file:../apps/shared",
     "@react-three/fiber": "^9.6.0",
     "@tailwindcss/vite": "^4.2.1",
