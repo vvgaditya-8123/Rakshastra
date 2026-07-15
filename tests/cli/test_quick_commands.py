@@ -62,10 +62,14 @@ class TestCLIQuickCommands:
 
     def test_exec_command_no_output_shows_fallback(self):
         cli = self._make_cli({"empty": {"type": "exec", "command": "true"}})
-        cli.process_command("/empty")
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value = subprocess.CompletedProcess(
+                args="true", returncode=0, stdout="", stderr=""
+            )
+            cli.process_command("/empty")
         cli.console.print.assert_called_once()
         args = cli.console.print.call_args[0][0]
-        assert "no output" in args.lower()
+        assert "no output" in self._printed_plain(args).lower()
 
     def test_alias_command_routes_to_target(self):
         """Alias quick commands rewrite to the target command."""
@@ -87,21 +91,21 @@ class TestCLIQuickCommands:
         cli.process_command("/broken")
         cli.console.print.assert_called_once()
         args = cli.console.print.call_args[0][0]
-        assert "no target defined" in args.lower()
+        assert "no target defined" in self._printed_plain(args).lower()
 
     def test_unsupported_type_shows_error(self):
         cli = self._make_cli({"bad": {"type": "prompt", "command": "echo hi"}})
         cli.process_command("/bad")
         cli.console.print.assert_called_once()
         args = cli.console.print.call_args[0][0]
-        assert "unsupported type" in args.lower()
+        assert "unsupported type" in self._printed_plain(args).lower()
 
     def test_missing_command_field_shows_error(self):
         cli = self._make_cli({"oops": {"type": "exec"}})
         cli.process_command("/oops")
         cli.console.print.assert_called_once()
         args = cli.console.print.call_args[0][0]
-        assert "no command defined" in args.lower()
+        assert "no command defined" in self._printed_plain(args).lower()
 
     def test_quick_command_takes_priority_over_skill_commands(self):
         """Quick commands must be checked before skill slash commands."""
@@ -126,7 +130,7 @@ class TestCLIQuickCommands:
             cli.process_command("/slow")
         cli.console.print.assert_called_once()
         args = cli.console.print.call_args[0][0]
-        assert "timed out" in args.lower()
+        assert "timed out" in self._printed_plain(args).lower()
 
 
 # ── Gateway tests ──────────────────────────────────────────────────────────

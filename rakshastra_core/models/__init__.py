@@ -6,6 +6,12 @@ from rakshastra_core.models.scan import Scan
 from rakshastra_core.models.incident import Incident
 from rakshastra_core.models.report import Report
 from rakshastra_core.models.workflow import WorkflowState, WorkflowStep
+from rakshastra_core.models.behavior import (
+    BehaviorBaseline,
+    AnomalyEvent,
+    EntityType,
+    AnomalyCategory,
+)
 
 __all__ = [
     "RakshastraModel",
@@ -21,4 +27,9 @@ __all__ = [
     "Report",
     "WorkflowState",
     "WorkflowStep",
+    "BehaviorBaseline",
+    "AnomalyEvent",
+    "EntityType",
+    "AnomalyCategory",
 ]
+
