@@ -159,9 +159,9 @@ jobs:
           echo "$RESULTS" | python3 -c "
           import json, sys
           results = json.load(sys.stdin)
-          failed = [r for r in results if r == 'failure']
+          failed = [r for r in results if r in ('failure', 'cancelled')]
           if failed:
-              print(f'::error::{len(failed)} job(s) failed')
+              print(f'::error::{len(failed)} job(s) failed or cancelled')
               sys.exit(1)
           print('All checks passed (or were skipped)')
           "
