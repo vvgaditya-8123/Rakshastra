@@ -32,6 +32,9 @@ class AnomalyCategory(str, Enum):
     NETWORK_ANOMALY = "NETWORK_ANOMALY"     # Port scan, beaconing pattern
     PERSISTENCE = "PERSISTENCE"             # Registry/cron/startup modification
     COMMAND_ANOMALY = "COMMAND_ANOMALY"      # Unusual command execution pattern
+    APT_BEACONING = "APT_BEACONING"          # Periodic C2 callbacks with low jitter
+    APT_STAGING = "APT_STAGING"              # Unusual file access patterns pre-exfiltration
+    APT_C2_COMMUNICATION = "APT_C2_COMMUNICATION"  # DNS tunneling / encoded payloads
 
 
 @dataclass
