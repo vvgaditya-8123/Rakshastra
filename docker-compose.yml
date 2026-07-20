@@ -38,6 +38,7 @@ services:
     environment:
       - RAKSHASTRA_UID=${RAKSHASTRA_UID:-10000}
       - RAKSHASTRA_GID=${RAKSHASTRA_GID:-10000}
+      - RAKSHASTRA_GATEWAY_BOOTSTRAP_STATE=running
       # To expose the OpenAI-compatible API server beyond localhost,
       # uncomment BOTH lines (API_SERVER_KEY is mandatory for auth):
       # - API_SERVER_HOST=0.0.0.0
