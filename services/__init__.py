@@ -605,3 +605,75 @@ class VulnerabilityPrioritizerService:
         return get_vulnerability_prioritizer_engine().get_summary()
 
 
+_digital_twin_engine = None
+
+
+def get_digital_twin_engine():
+    global _digital_twin_engine
+    if _digital_twin_engine is None:
+        from rakshastra_core.engines.digital_twin_engine import DigitalTwinEngine
+        from rakshastra_constants import get_rakshastra_home
+        db_path = get_rakshastra_home() / "digital_twin.db"
+        _digital_twin_engine = DigitalTwinEngine(db_path)
+    return _digital_twin_engine
+
+
+class DigitalTwinService:
+    @staticmethod
+    def add_node(
+        name: str,
+        node_type: str = "HOST",
+        department: str = "IT",
+        ip_address: str = "",
+        security_controls: Optional[List[str]] = None,
+        vulnerability_count: int = 0,
+        criticality_weight: float = 1.0,
+        node_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        return get_digital_twin_engine().add_node(
+            name=name,
+            node_type=node_type,
+            department=department,
+            ip_address=ip_address,
+            security_controls=security_controls,
+            vulnerability_count=vulnerability_count,
+            criticality_weight=criticality_weight,
+            node_id=node_id,
+        )
+
+    @staticmethod
+    def add_edge(
+        source_id: str,
+        target_id: str,
+        protocol: str = "TCP",
+        port: Optional[int] = None,
+        trust_level: float = 0.5,
+        edge_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        return get_digital_twin_engine().add_edge(
+            source_id=source_id,
+            target_id=target_id,
+            protocol=protocol,
+            port=port,
+            trust_level=trust_level,
+            edge_id=edge_id,
+        )
+
+    @staticmethod
+    def get_topology() -> Dict[str, Any]:
+        return get_digital_twin_engine().get_topology()
+
+    @staticmethod
+    def simulate_attack(scenario_key: str, entry_node_id: str) -> Dict[str, Any]:
+        return get_digital_twin_engine().simulate_attack(scenario_key, entry_node_id)
+
+    @staticmethod
+    def apply_defense_whatif(sim_id: str, defense_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return get_digital_twin_engine().apply_defense_whatif(sim_id, defense_actions)
+
+    @staticmethod
+    def get_summary() -> Dict[str, Any]:
+        return get_digital_twin_engine().get_summary()
+
+
+
