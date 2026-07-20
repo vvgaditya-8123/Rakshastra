@@ -72,8 +72,8 @@ services:
     environment:
       - RAKSHASTRA_UID=${RAKSHASTRA_UID:-10000}
       - RAKSHASTRA_GID=${RAKSHASTRA_GID:-10000}
-    # Localhost-only. For remote access, tunnel via `ssh -L 9119:localhost:9119`.
-    command: ["dashboard", "--host", "127.0.0.1", "--no-open"]
+    # Changed to 0.0.0.0 for remote VPS access. For production, put behind a reverse proxy with auth.
+    command: ["dashboard", "--host", "0.0.0.0", "--no-open"]
 
   qdrant:
     image: qdrant/qdrant:latest
