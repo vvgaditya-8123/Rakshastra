@@ -1,0 +1,6 @@
+name: digital_twin
+version: 1.0.0
+description: Cyber Resilience Digital Twin Graph AI & Red Team Scenario Simulator
+author: Rakshastra Core Team
+hooks:
+  post_tool_call: on_post_tool_call

@@ -88,6 +88,9 @@ _RAKSHASTRA_CORE_TOOLS = [
     # Government Infrastructure Vulnerability Prioritisation (Cyber Resilience Point 4)
     "vuln_register_asset", "vuln_prioritize_cve", "vuln_scan_asset",
     "vuln_get_certin_advisories", "vuln_remediation_roadmap", "vuln_dashboard_summary",
+    # Cyber Resilience Digital Twin Engine (Cyber Resilience Point 5)
+    "dt_add_node", "dt_add_edge", "dt_get_topology",
+    "dt_simulate_attack", "dt_apply_defense_whatif", "dt_dashboard_summary",
 ]
 
 # Webhook events may originate from untrusted third-party content (for example,
@@ -311,6 +314,19 @@ TOOLSETS = {
             "vuln_get_certin_advisories",
             "vuln_remediation_roadmap",
             "vuln_dashboard_summary"
+        ],
+        "includes": []
+    },
+
+    "digital_twin": {
+        "description": "Cyber Resilience Digital Twin Graph AI & Red Team Scenario Simulator — simulates cyber attack campaigns (Ransomware, APT, Zero-Day, Exfiltration), blast radius %, Probability of Compromise (PoC), and What-If defensive interdictions.",
+        "tools": [
+            "dt_add_node",
+            "dt_add_edge",
+            "dt_get_topology",
+            "dt_simulate_attack",
+            "dt_apply_defense_whatif",
+            "dt_dashboard_summary"
         ],
         "includes": []
     },

@@ -11,6 +11,7 @@ from rakshastra_core.engines.attack_graph import AttackGraphEngine
 from rakshastra_core.engines.soar_engine import SOAREngine
 from rakshastra_core.engines.incident_response_engine import IncidentResponseEngine
 from rakshastra_core.engines.cve_prioritizer import VulnerabilityPrioritizerEngine
+from rakshastra_core.engines.digital_twin_engine import DigitalTwinEngine
 
 # Backward compatibility alias
 AssetGraph = InfrastructureGraph
@@ -30,5 +31,6 @@ __all__ = [
     "SOAREngine",
     "IncidentResponseEngine",
     "VulnerabilityPrioritizerEngine",
+    "DigitalTwinEngine",
 ]
 
