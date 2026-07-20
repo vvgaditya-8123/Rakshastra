@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import {
   ShieldAlert,
   Search,
@@ -109,6 +109,7 @@ export default function APTDashboardPage() {
       setLoading(false);
     }
   };
+
 
   const loadIncidents = async () => {
     try {
@@ -603,14 +604,14 @@ export default function APTDashboardPage() {
                           <span className="text-[10px] text-white font-bold uppercase">Optimal Route (Difficulty: {p.difficulty_score})</span>
                           <div className="flex flex-wrap items-center gap-2 text-[10px]">
                             {p.path.map((node: any, nIdx: number) => (
-                              <React.Fragment key={node.id}>
+                              <Fragment key={node.id}>
                                 {nIdx > 0 && <span className="text-text-tertiary">→</span>}
                                 <span className={`px-2 py-0.5 rounded font-bold border ${
                                   node.type === "unknown" ? "bg-red-500/10 border-red-500/30 text-red-400" : "bg-white/[0.02] border-white/5 text-white"
                                 }`}>
                                   {node.name} <span className="text-[7.5px] text-text-tertiary uppercase font-normal">({node.type})</span>
                                 </span>
-                              </React.Fragment>
+                              </Fragment>
                             ))}
                           </div>
                         </div>
