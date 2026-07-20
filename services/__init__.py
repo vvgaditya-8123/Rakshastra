@@ -20,7 +20,8 @@ from rakshastra_core.engines import (
     AttackGraphEngine,
     SOAREngine,
     InfrastructureGraph,
-    BehavioralAnalyticsEngine
+    BehavioralAnalyticsEngine,
+    IncidentResponseEngine
 )
 from rakshastra_core.engines.workflow import SecurityWorkflowEngine
 from rakshastra_core.engines.reasoning import SecurityReasoningEngine
@@ -47,6 +48,7 @@ _soar_engine = None
 _attack_graph_engine = None
 _apt_service = None
 _behavioral_analytics = None
+_incident_response_engine = None
 
 
 def get_drug_engine():
@@ -170,6 +172,14 @@ def get_apt_service():
             soar_engine=get_soar_engine()
         )
     return _apt_service
+
+def get_incident_response_engine():
+    global _incident_response_engine
+    if _incident_response_engine is None:
+        db_path = get_rakshastra_home() / "incident_response.db"
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        _incident_response_engine = IncidentResponseEngine(db_path)
+    return _incident_response_engine
 
 
 
@@ -484,4 +494,42 @@ class UEBAService:
     @staticmethod
     def get_risk_timeline(entity_id: str) -> List[Dict[str, Any]]:
         return get_behavioral_analytics_engine().get_entity_risk_timeline(entity_id)
+
+
+class IncidentResponseService:
+    @staticmethod
+    def triage_alert(alert_data: Dict[str, Any], source_type: str = "anomaly") -> Dict[str, Any]:
+        return get_incident_response_engine().triage_alert(alert_data, source_type=source_type)
+
+    @staticmethod
+    def execute_containment(incident_id: str, mode: str = "simulate", action_ids: Optional[List[str]] = None, target: str = "") -> Dict[str, Any]:
+        return get_incident_response_engine().execute_containment(incident_id, action_ids=action_ids, mode=mode, target=target)
+
+    @staticmethod
+    def escalate_incident(incident_id: str) -> Dict[str, Any]:
+        return get_incident_response_engine().escalate_incident(incident_id)
+
+    @staticmethod
+    def investigate(incident_id: str, notes: str = "") -> Dict[str, Any]:
+        return get_incident_response_engine().run_investigation(incident_id, notes=notes)
+
+    @staticmethod
+    def auto_respond(alert_data: Dict[str, Any], mode: str = "simulate") -> Dict[str, Any]:
+        return get_incident_response_engine().auto_respond(alert_data, mode=mode)
+
+    @staticmethod
+    def close_incident(incident_id: str, resolution: str = "resolved") -> Dict[str, Any]:
+        return get_incident_response_engine().close_incident(incident_id, resolution=resolution)
+
+    @staticmethod
+    def get_incidents(phase: Optional[str] = None, limit: int = 50) -> List[Dict[str, Any]]:
+        return get_incident_response_engine().get_incidents(phase, limit)
+
+    @staticmethod
+    def get_incident(incident_id: str) -> Optional[Dict[str, Any]]:
+        return get_incident_response_engine().get_incident(incident_id)
+
+    @staticmethod
+    def get_summary() -> Dict[str, Any]:
+        return get_incident_response_engine().get_summary()
 

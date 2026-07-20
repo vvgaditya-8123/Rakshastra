@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { 
   Wallet, 
-  CheckCircle, 
-  XCircle, 
   Coins, 
   ArrowRightLeft, 
   Copy, 
   Loader2, 
-  RefreshCw,
   QrCode,
   ShieldCheck,
   Zap
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Badge } from "@nous-research/ui/ui/components/badge";
 import { Button } from "@nous-research/ui/ui/components/button";
-
-const RECIPIENT_WALLET = "RAKSHASTRAFIVEEIGHTCHARACTERSADDRESSFORTESTINGPURPOSES2345";
 
 interface TransactionItem {
   id: string;
@@ -29,7 +23,6 @@ export function WalletConnect() {
   const [connected, setConnected] = useState(false);
   const [address, setAddress] = useState("");
   const [balance, setBalance] = useState(120.45);
-  const [connecting, setConnecting] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   
   // Transaction signing state
@@ -63,7 +56,6 @@ export function WalletConnect() {
   }, []);
 
   const handleConnectWallet = () => {
-    setConnecting(true);
     setShowQrModal(true);
     
     // Simulate connection flow with Pera Wallet QR code scanning
@@ -72,7 +64,6 @@ export function WalletConnect() {
       setConnected(true);
       setAddress(mockAddr);
       setBalance(120.45);
-      setConnecting(false);
       setShowQrModal(false);
       
       localStorage.setItem("rakshastra.walletConnected", "true");

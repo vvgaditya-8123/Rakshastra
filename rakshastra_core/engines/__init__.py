@@ -9,6 +9,7 @@ from rakshastra_core.engines.apt_attribution import APTAttributionEngine
 from rakshastra_core.engines.attack_predictor import AttackPredictorEngine
 from rakshastra_core.engines.attack_graph import AttackGraphEngine
 from rakshastra_core.engines.soar_engine import SOAREngine
+from rakshastra_core.engines.incident_response_engine import IncidentResponseEngine
 
 # Backward compatibility alias
 AssetGraph = InfrastructureGraph
@@ -26,5 +27,6 @@ __all__ = [
     "AttackPredictorEngine",
     "AttackGraphEngine",
     "SOAREngine",
+    "IncidentResponseEngine",
 ]
 

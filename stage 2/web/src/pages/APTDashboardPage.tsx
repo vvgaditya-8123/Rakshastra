@@ -6,17 +6,13 @@ import {
   Network,
   Cpu,
   Terminal,
-  FileText,
   AlertTriangle,
   Play,
   RotateCcw,
   CheckCircle,
-  HelpCircle,
-  Info,
   Sliders,
   Globe,
-  Database,
-  UserCheck
+  Database
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -60,7 +56,6 @@ export default function APTDashboardPage() {
 
   // SOAR states
   const [incidents, setIncidents] = useState<any[]>([]);
-  const [playbooks, setPlaybooks] = useState<any[]>([]);
   const [activeIncident, setActiveIncident] = useState<any>(null);
   const [incidentActions, setIncidentActions] = useState<any[]>([]);
   const [soarLoading, setSoarLoading] = useState(false);
@@ -81,7 +76,6 @@ export default function APTDashboardPage() {
   // Load initial data
   useEffect(() => {
     runAnalysis();
-    loadPlaybooks();
     loadIncidents();
     loadChokepoints();
     runRagSearch();
@@ -113,15 +107,6 @@ export default function APTDashboardPage() {
       console.error("APT Analysis failed", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadPlaybooks = async () => {
-    try {
-      const pbs = await api.soarGetPlaybooks();
-      setPlaybooks(pbs || []);
-    } catch (err) {
-      console.error("Failed to load playbooks", err);
     }
   };
 
