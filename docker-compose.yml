@@ -73,6 +73,8 @@ services:
     environment:
       - RAKSHASTRA_UID=${RAKSHASTRA_UID:-10000}
       - RAKSHASTRA_GID=${RAKSHASTRA_GID:-10000}
+      - RAKSHASTRA_DASHBOARD_BASIC_AUTH_USERNAME=${DASHBOARD_USERNAME:-admin}
+      - RAKSHASTRA_DASHBOARD_BASIC_AUTH_PASSWORD=${DASHBOARD_PASSWORD:-admin123}
     # Changed to 0.0.0.0 for remote VPS access. For production, put behind a reverse proxy with auth.
     command: ["dashboard", "--host", "0.0.0.0", "--no-open"]
 
